@@ -9,7 +9,7 @@ Printer can:
 */
 public class Printer {
     
-    static private void printSEL(Product product){
+    private void printSEL(Product product){
         System.out.println("*********************************");
         System.out.println("          Name:"+product.name+"               ");
         System.out.println("          Price: "+product.price+"               ");
