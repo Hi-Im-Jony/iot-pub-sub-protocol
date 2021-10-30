@@ -1,3 +1,4 @@
+package Product;
 
 /*
 A class to store information on a product
