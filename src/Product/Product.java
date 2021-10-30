@@ -4,9 +4,9 @@ package Product;
 A class to store information on a product
 */
 public class Product {
-    String name;
-    int idCode;
-    float price;
+    public String name;
+    public int idCode;
+    public float price;
 
     Product(String name, int idCode, float price){
         this.name = name;
