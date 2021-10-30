@@ -9,8 +9,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 
-// Class that can send or receive, based on inputs
-
+// Class that can send and/or receive udp packets
 public class SenderReceiver {
     
 	static final int MTU = 1500;

@@ -11,8 +11,15 @@ import java.net.InetAddress;
 import java.util.HashMap;
 
 import java.util.ArrayList;
-// Class that can send or receive, based on inputs
+/* 
+The broker is the middle man in this network. 
+It receives packets with requests from various clients, and tries to fulfill those requests.
 
+Broker can:
+- Send/Receive packets
+- Store list of subs to topics
+- Publish data to subs of topic
+*/
 public class Broker {
     
 	static final int MTU = 1500;

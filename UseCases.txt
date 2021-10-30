@@ -21,5 +21,8 @@ Scanner can:
 - Subscribe to a "section" of the store (ie, sub to a topic)
 - Get notified when item in section gets added/edited/removed
 
-
+Broker can:
+- Send/Receive packets
+- Store list of subs to topics
+- Publish data to subs of topic
 
