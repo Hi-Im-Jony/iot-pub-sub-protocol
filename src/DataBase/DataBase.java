@@ -13,60 +13,40 @@ Database can:
 - Send error messages to broker
 */
 public class DataBase {
-    HashMap<String, HashMap<Integer, Product>> products;
-
-    private void addSection(String sectionName){
-        if(!products.containsKey(sectionName)){
-            HashMap<Integer, Product> section = new HashMap<>();
-            products.put(sectionName, section);
-
-            //TODO send success message to broker
-        }
-        else{
-            //TODO send error message to broker
-        }
-    }
-
-    private void removeSection(String sectionName){
-        products.remove(sectionName);
-    }
+    HashMap<Integer, Product> products;
 
     private void addProduct( Product product){
-        if(products.containsKey(product.section)){
-            if(!products.get(product.section).containsKey(product.idCode)){
-                products.get(product.section).put(product.idCode, product);
-                
-                // TODO send success message to broker
-            }
-            else{
-                // TODO send error message to broker "Product exists"
-            }
+        
+        if(!products.containsKey(product.idCode)){
+            products.put(product.idCode, product);
+            
+            // TODO send success message to broker
+            // TODO ask broker to update subs to this section
         }
         else{
-            // TODO send error message to broker "Section doesn't exist"
+            // TODO send error message to broker "Product exists"
         }
     }
 
     private void updateProduct( Product product){
-        if(products.containsKey(product.section)){
-            if(products.get(product.section).containsKey(product.idCode)){
-                products.get(product.section).put(product.idCode, product);
-                
-                // TODO send success message to broker
-                // TODO ask broker to update subs to this section
-            }
-            else{
-                // TODO send error message to broker "Product doesn't exist"
-            }
+        
+        if(products.containsKey(product.idCode)){
+            products.put(product.idCode, product);
+            
+            // TODO send success message to broker
+            // TODO ask broker to update subs to this section
         }
         else{
-            // TODO send error message to broker "Section doesn't exist"
+            // TODO send error message to broker "Product doesn't exist"
         }
-        
     }
 
     private void removeProduct(Product product){
-        if(products.containsKey(product.section))
-            products.get(product.section).remove(product.idCode);
+        if(products.containsKey(product.section)){
+            products.remove(product.idCode);
+            
+            // TODO ask broker to update subs to this section
+        }
+
     }
 }
