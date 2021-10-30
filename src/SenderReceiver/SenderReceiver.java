@@ -8,7 +8,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import java.awt.event.ActionListener;
 
 // Class that can send or receive, based on inputs
 
