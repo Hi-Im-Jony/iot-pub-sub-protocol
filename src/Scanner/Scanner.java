@@ -11,4 +11,19 @@ After finding an item in the db, Scanner can:
 */
 public class Scanner {
     
+    private void scan(int code){
+        // TODO
+    }
+
+    private void printSEL(int code){
+        // TODO
+    }
+
+    private void subToSection(String section){
+        //  TODO
+    }
+
+    private void receiveAlert(){
+        // TODO
+    }
 }
