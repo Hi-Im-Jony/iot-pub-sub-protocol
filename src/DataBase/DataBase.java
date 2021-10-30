@@ -31,10 +31,10 @@ public class DataBase {
         products.remove(sectionName);
     }
 
-    private void addProduct(String section, Product product){
-        if(products.containsKey(section)){
-            if(!products.get(section).containsKey(product.idCode)){
-                products.get(section).put(product.idCode, product);
+    private void addProduct( Product product){
+        if(products.containsKey(product.section)){
+            if(!products.get(product.section).containsKey(product.idCode)){
+                products.get(product.section).put(product.idCode, product);
                 
                 // TODO send success message to broker
             }
@@ -47,10 +47,10 @@ public class DataBase {
         }
     }
 
-    private void updateProduct(String section, Product product){
-        if(products.containsKey(section)){
-            if(products.get(section).containsKey(product.idCode)){
-                products.get(section).put(product.idCode, product);
+    private void updateProduct( Product product){
+        if(products.containsKey(product.section)){
+            if(products.get(product.section).containsKey(product.idCode)){
+                products.get(product.section).put(product.idCode, product);
                 
                 // TODO send success message to broker
                 // TODO ask broker to update subs to this section
@@ -65,7 +65,8 @@ public class DataBase {
         
     }
 
-    private void removeProduct(String section, int idCode){
-        products.get(section).remove(idCode);
+    private void removeProduct(Product product){
+        if(products.containsKey(product.section))
+            products.get(product.section).remove(product.idCode);
     }
 }
