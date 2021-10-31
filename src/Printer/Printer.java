@@ -2,7 +2,6 @@ package Printer;
 
 import java.io.IOException;
 
-import Product.Product;
 import SenderReceiver.SenderReceiver;
 
 /*
