@@ -41,6 +41,7 @@ public class Printer{
     
     public static void main(String[] args) throws IOException {
         
+        System.out.println("Printer turned on");
         int receiverPort =  Integer.parseInt(args[0]);
         PrinterReceiver receiver = new PrinterReceiver(receiverPort);
 
