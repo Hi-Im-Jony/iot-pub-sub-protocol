@@ -10,51 +10,33 @@ import java.net.InetAddress;
 
 
 // Class that can send and/or receive udp packets
-public class SenderReceiver {
+public class SenderReceiver{
     
 	static final int MTU = 1500;
 
-	static DatagramSocket receiver_socket;
-	static DatagramSocket sender_socket;
+	private DatagramSocket receiverSocket;
+	private DatagramSocket senderSocket;
 
-    public static void main(String[] args) throws IOException {
-        System.out.println("ReceiverProcess - Program start");
+	private String owner;
 
-		InetAddress address= InetAddress.getLocalHost(); 
+	
+	public SenderReceiver(int receiverPort, String owner) throws IOException{
 
-		int receiver_port =  Integer.parseInt(args[0]);
-        int destination_port = Integer.parseInt(args[1]);
+		InetAddress address = InetAddress.getLocalHost();
 
-        String topic = args[2];
-		String data = args[2];
+		this.owner = owner;
+
+		senderSocket = new DatagramSocket();
+		receiverSocket= new DatagramSocket(receiverPort, address);
 		
-		sender_socket = new DatagramSocket();
-			
-		receiver_socket= new DatagramSocket(receiver_port, address);
-		receiver_socket.setSoTimeout(500); // 0.5 seconds
-
-        int counter = 0;
-		while(true){
-			try {
-                if(receiver_port>0)
-                    receive();
-            } catch (IOException e) {
-                System.out.println("Nothing received" + counter);
-                counter ++;
-            }
-            if(destination_port>0)
-				send(buildPayload(topic, data), destination_port);			
-            
-		}
-    }
-
-    private static void receive() throws IOException{
+	}
+    public String receive() throws IOException{
 		
-		// create buffer for data, packet and receiver_socket
+		// create buffer for data, packet and receiverSocket
 		byte[] buffer= new byte[MTU];
 		DatagramPacket packet= new DatagramPacket(buffer, buffer.length);
 	
-		receiver_socket.receive(packet);
+		receiverSocket.receive(packet);
 
 		// extract data from packet
 		buffer= packet.getData();
@@ -63,10 +45,11 @@ public class SenderReceiver {
 
 		// print data and end of program
         String data =  ostream.readUTF();
-		System.out.println("Data: " + data);
+		System.out.println(owner+"received: " + data);
+		return data;
 	}
 
-    private static void send(String payload, int dest) throws IOException{
+    public void send(String payload, int dest) throws IOException{
 		
 		InetAddress address= InetAddress.getLocalHost();   
 		int port= dest;                       
@@ -80,11 +63,11 @@ public class SenderReceiver {
 		byte[] buffer = bstream.toByteArray();
 		// create packet addressed to destination
 		DatagramPacket packet= new DatagramPacket(buffer, buffer.length, address, port);
-		sender_socket.send(packet);
+		senderSocket.send(packet);
 		
 	}
 
-	private static String buildPayload(String topic, String data){
+	public String buildPayload(String topic, String data){
         String load = "2"+ topic + data;
         //System.out.println(load);
 		return  load;
