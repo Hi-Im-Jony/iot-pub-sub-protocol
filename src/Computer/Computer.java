@@ -28,7 +28,8 @@ public class Computer {
         CopmuterReceiverThread receiverThread = new CopmuterReceiverThread(); // create new "back up thread" to receive while we print
         receiverThread.start();
 
-        if(Integer.parseInt(args[1])==0)
+        //if(Integer.parseInt(args[1])==0)
+        if(false)
             operateManually();
         else
             operateAutomaticlly();
@@ -39,12 +40,33 @@ public class Computer {
     }
 
     // automatic, hardcoded operation of "Computer"
-    private static void operateAutomaticlly(){
+    private static void operateAutomaticlly() throws IOException{
+        addProduct(0,"A","Games",19.99);
+        addProduct(1,"Bb","Games",19.99);
+        addProduct(2,"CCC","Toys",19.99);
+        addProduct(3,"DDD","Toys",19.99);
+
+        requestProductDetails(2);
+
 
     }
 
-    private static void interpretResponse(String data){
+    private static void viewReceivedData(String data){
 
+        String[] splitData = data.split(":");
+        String request = splitData[0];
+
+        switch(request){
+            case "prodDet":
+                String[] productDetails = splitData[1].split("/");
+                System.out.println("\n\n\n----------------------");
+                System.out.println("      |  Product details   ");
+                System.out.println("      | -------------------");
+                System.out.println("      | Name:"+productDetails[1]);
+                System.out.println("      | Price:"+productDetails[3]);
+                System.out.println("      | -------------------|");
+                break;
+        }
     }
     private static class CopmuterReceiverThread extends Thread{
         @Override
@@ -54,7 +76,7 @@ public class Computer {
 
                 CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
                 receiverThread.start();
-                interpretResponse(data);
+                viewReceivedData(data);
                 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -62,11 +84,11 @@ public class Computer {
         }
     }
     
-    private void requestProductDetails(int idCode) throws IOException{
+    private static void requestProductDetails(int idCode) throws IOException{
         transreceiver.send("reqprod:"+idCode, 2);
     }
 
-    private void addProduct(int idCode, String name, String section,  double price) throws IOException{
+    private static void addProduct(int idCode, String name, String section,  double price) throws IOException{
         transreceiver.send("addprod:"+idCode+"/"+name+"/"+section+"/"+price, 2);
     }
 
@@ -78,7 +100,7 @@ public class Computer {
         transreceiver.send("ediprod:"+idCode+"/"+name+"/"+section+"/"+price, 2);
     }
 
-    private void getInput(int idCode) throws IOException{
+    private void printProductSEL(int idCode) throws IOException{
         transreceiver.send("print:"+idCode, 2);
     }
 
@@ -118,7 +140,6 @@ public class Computer {
 
             // print data and end of program
             String data =  ostream.readUTF();
-            System.out.println(owner+"received: " + data);
             return data;
         }
 
