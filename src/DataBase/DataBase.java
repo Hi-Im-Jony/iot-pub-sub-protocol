@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.text.BreakIterator;
 import java.util.HashMap;
 
 /*
@@ -29,21 +28,37 @@ public class DataBase {
         
         System.out.println("DataBase turned on");
 
+        // get receiver port and setup transreceiver
         int receiverPort =  Integer.parseInt(args[0]);
         transreceiver = new SenderReceiver(receiverPort, "Database");
 
-        String request = transreceiver.receive(); // receive request
-        DataBaseRecThread backup = new DataBaseRecThread(); // create new "back up thread" to receive while we print
+        // start listening for packets
+        String request = transreceiver.receive(); // execution is blocked here until a packet is received
+
+        DataBaseRecThread backup = new DataBaseRecThread(); // create new "back up thread" to receive while we execute the request
         backup.start();
+
         executeRequest(request);
     }
-
+    private static class DataBaseRecThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                String request = transreceiver.receive();
+                DataBaseRecThread backup = new DataBaseRecThread();
+                backup.start();
+                executeRequest(request);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-
-        String[] splitData = data.split("/");
+        String[] splitData = data.split("/"); // idCode+"/"+name+"/"+section+"/"+price
         int request = Integer.parseInt(splitData[0]);
-        // idCode+"/"+name+"/"+section+"/"+price
+        
         switch(request){
             case 0:
                 addProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
@@ -62,61 +77,53 @@ public class DataBase {
                 break;
         }
     }
-    private static class DataBaseRecThread extends Thread{
-        @Override
-        public void run(){
-            try {
-                String request = transreceiver.receive();
-                DataBaseRecThread backup = new DataBaseRecThread();
-                backup.start();
-                executeRequest(request);
-                
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    private static void addProduct( int idCode, String name, String section,  double price){
+
+    private static void addProduct( int idCode, String name, String section,  double price) throws IOException{
         
         if(!products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
             
-            // TODO send success message to broker
-            // TODO ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+product.section, 1); // ask broker to update subs to this section
+        
         }
         else{
-            // TODO send error message to broker "Product exists"
+            transreceiver.send("Error 101: Product exists", 1); // send error message to broker "Product exists"
         }
     }
 
-    private static void updateProduct(int idCode, String name, String section, double price){
+    private static void updateProduct(int idCode, String name, String section, double price) throws IOException{
         
         if(products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
             products.put(product.idCode, product);
             
-            // TODO send success message to broker
-            // TODO ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+product.section, 1); // ask broker to update subs to this section
         }
         else{
-            // TODO send error message to broker "Product doesn't exist"
+            transreceiver.send("Error 102: Product doesn't exist", 1); // send error message to broker "Product doesn't exist"
         }
     }
 
-    private static void removeProduct( int idCode){
+    private static void removeProduct( int idCode) throws IOException{
         if(products.containsKey(idCode)){
+            String section = products.get(idCode).section;
+
             products.remove(idCode);
             
-            // TODO ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+section, 1); // ask broker to update subs to this section
         }
 
     }
 
     private static void serve(int idCode) throws IOException{
-        // TODO send to broker product with matching idCode
-        Product requestedProduct = products.get(idCode);
-        transreceiver.send(products.toString(), 1);
+        if(products.containsKey(idCode)){
+            Product requestedProduct = products.get(idCode);
+            transreceiver.send(requestedProduct.toString(), 1);
+        }
+        else{
+            transreceiver.send("Error 102: Product doesn't exist", 1); // send error message to broker "Product doesn't exist
+        }
 
     }
 
@@ -205,12 +212,6 @@ public class DataBase {
             DatagramPacket packet= new DatagramPacket(buffer, buffer.length, address, port);
             senderSocket.send(packet);
             
-        }
-
-        public String buildPayload(String topic, String data){
-            String load = topic + data;
-            //System.out.println(load);
-            return  load;
         }
     }
 }
