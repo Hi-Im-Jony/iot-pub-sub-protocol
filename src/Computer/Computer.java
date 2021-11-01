@@ -17,29 +17,69 @@ Company Computer can:
 - Print item SEL
 */
 public class Computer {
+    private static SenderReceiver transreceiver;
+    public static void main(String[] args) throws IOException {
+        
+        System.out.println("Computer turned on");
+
+        int receiverPort =  Integer.parseInt(args[0]);
+        transreceiver = new SenderReceiver(receiverPort, "Printer");
+
+        CopmuterReceiverThread receiverThread = new CopmuterReceiverThread(); // create new "back up thread" to receive while we print
+        receiverThread.start();
+
+        if(Integer.parseInt(args[1])==0)
+            operateManually();
+        else
+            operateAutomaticlly();
+    }
+
+    // manual operation of "Computer" via terminal
+    private static void operateManually(){
+    }
+
+    // automatic, hardcoded operation of "Computer"
+    private static void operateAutomaticlly(){
+
+    }
+
+    private static void interpretResponse(String data){
+
+    }
+    private static class CopmuterReceiverThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                String data = transreceiver.receive();
+
+                CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
+                receiverThread.start();
+                interpretResponse(data);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     
-    private void requestProductDetails(int idCode){
-        // TODO request product details from db, via Broker
-        // print item details to console (ie, displaying details on computer screen)
+    private void requestProductDetails(int idCode) throws IOException{
+        transreceiver.send("prodreq:"+idCode, 2);
     }
 
-    private void addProduct(int idCode, String name, String section,  double price){
-        // TODO add product to db via broker
-        // print success message to console
+    private void addProduct(int idCode, String name, String section,  double price) throws IOException{
+        transreceiver.send("addprod:"+idCode+"/"+name+"/"+section+"/"+price, 2);
     }
 
-    private void removeProduct(int idCode){
-        // TODO remove product from db via broker
-        // print success message to console
+    private void removeProduct(int idCode) throws IOException{
+        transreceiver.send("remprod:"+idCode, 2);
     }
 
-    private void editProduct(int idCode, String name, String section,  double price){
-        // TODO edit product from db via broker
-        // print success message to console
+    private void editProduct(int idCode, String name, String section,  double price) throws IOException{
+        transreceiver.send("ediprod:"+idCode+"/"+name+"/"+section+"/"+price, 2);
     }
 
-    private void printSEL(int idCode){
-        // TODO use Printer to print SEL
+    private void getInput(int idCode) throws IOException{
+        transreceiver.send("print:"+idCode, 2);
     }
 
      // Class that can send and/or receive udp packets
