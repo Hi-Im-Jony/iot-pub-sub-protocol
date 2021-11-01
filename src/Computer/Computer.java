@@ -63,7 +63,7 @@ public class Computer {
     }
     
     private void requestProductDetails(int idCode) throws IOException{
-        transreceiver.send("prodreq:"+idCode, 2);
+        transreceiver.send("reqprod:"+idCode, 2);
     }
 
     private void addProduct(int idCode, String name, String section,  double price) throws IOException{
