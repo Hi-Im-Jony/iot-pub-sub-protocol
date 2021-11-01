@@ -1,6 +1,7 @@
 package Broker;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -22,16 +23,15 @@ public class Broker {
 
     static HashMap<Integer, ArrayList<Integer>> topicSubscribers;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         sender = new SenderReceiver(0, "Broker"); // hardcoded receiver port because there is only one broker
         
         for(int i = 0; i<10;i++){
-            String payload = sender.buildPayload("Random Topic", "Random Data");
+            String payload = sender.buildPayload("", "Random Data: "+i);
             sender.send(payload, 2);
+            TimeUnit.SECONDS.sleep(1);
         }
-
-       
     }
 
     private static void executeRequest(int requestor_port, String data) throws IOException{
