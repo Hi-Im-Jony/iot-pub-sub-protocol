@@ -57,6 +57,9 @@ public class DataBase {
             case 3:
                 serve(Integer.parseInt(splitData[1]));
                 break;
+            case 4:
+                printAll();
+                break;
         }
     }
     private static class DataBaseRecThread extends Thread{
