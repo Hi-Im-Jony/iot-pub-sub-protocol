@@ -27,6 +27,7 @@ public class DataBase {
     public static void main(String[] args) throws IOException {
         
         System.out.println("DataBase turned on");
+        products = new HashMap<>();
 
         // get receiver port and setup transreceiver
         transreceiver = new SenderReceiver(1, "Database"); // hardcoded address cause only one database
@@ -57,7 +58,7 @@ public class DataBase {
         
         String[] splitData = data.split("/"); // idCode+"/"+name+"/"+section+"/"+price
         int request = Integer.parseInt(splitData[0]);
-        
+        System.out.println("All good 1");
         switch(request){
             case 0:
                 addProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
@@ -78,16 +79,16 @@ public class DataBase {
     }
 
     private static void addProduct( int idCode, String name, String section,  double price) throws IOException{
-        
+        System.out.println("All good 2");
         if(!products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
             
-            transreceiver.send("updatesubs:"+product.section, 1); // ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+product.section, 2); // ask broker to update subs to this section
         
         }
         else{
-            transreceiver.send("Error 101: Product exists", 1); // send error message to broker "Product exists"
+            transreceiver.send("Error 101: Product exists", 2); // send error message to broker "Product exists"
         }
     }
 
@@ -97,10 +98,10 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(product.idCode, product);
             
-            transreceiver.send("updatesubs:"+product.section, 1); // ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+product.section, 2); // ask broker to update subs to this section
         }
         else{
-            transreceiver.send("Error 102: Product doesn't exist", 1); // send error message to broker "Product doesn't exist"
+            transreceiver.send("Error 102: Product doesn't exist", 2); // send error message to broker "Product doesn't exist"
         }
     }
 
@@ -110,7 +111,7 @@ public class DataBase {
 
             products.remove(idCode);
             
-            transreceiver.send("updatesubs:"+section, 1); // ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+section, 2); // ask broker to update subs to this section
         }
 
     }
