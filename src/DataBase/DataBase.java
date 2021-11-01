@@ -23,7 +23,7 @@ Database can:
 public class DataBase {
     private static HashMap<Integer, Product> products;
    
-     private static SenderReceiver transreceiver;
+    private static SenderReceiver transreceiver;
     public static void main(String[] args) throws IOException {
         
         System.out.println("DataBase turned on");
