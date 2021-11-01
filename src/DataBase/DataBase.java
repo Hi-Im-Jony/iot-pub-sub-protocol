@@ -29,8 +29,7 @@ public class DataBase {
         System.out.println("DataBase turned on");
 
         // get receiver port and setup transreceiver
-        int receiverPort =  Integer.parseInt(args[0]);
-        transreceiver = new SenderReceiver(receiverPort, "Database");
+        transreceiver = new SenderReceiver(1, "Database"); // hardcoded address cause only one database
 
         // start listening for packets
         String request = transreceiver.receive(); // execution is blocked here until a packet is received
