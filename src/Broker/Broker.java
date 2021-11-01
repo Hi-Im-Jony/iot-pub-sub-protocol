@@ -27,11 +27,37 @@ public class Broker {
 
         transreceiver = new SenderReceiver(2, "Broker"); // hardcoded receiver port because there is only one broker
         
-        for(int i = 0; i<10;i++){
-            String payload = transreceiver.buildPayload("", "Random Data: "+i);
-            transreceiver.send(payload, 1);
-            TimeUnit.SECONDS.sleep(2);
-        }
+        // create 5 products
+        transreceiver.send("0/1/Aaaa/Toys/9.99", 1);
+        TimeUnit.SECONDS.sleep(2);
+        transreceiver.send("0/2/Bbbb/Toys/8.99", 1);
+        TimeUnit.SECONDS.sleep(2);
+        transreceiver.send("0/3/Cc/Cosmetics/7.99", 1);
+        TimeUnit.SECONDS.sleep(2);
+        transreceiver.send("0/4/Dddd/Cosmetics/5.99", 1);
+        TimeUnit.SECONDS.sleep(2);
+        transreceiver.send("0/5/Eee/Cosmetics/4.99", 1);
+        TimeUnit.SECONDS.sleep(2);
+
+        // print all
+        transreceiver.send("4", 1);
+        TimeUnit.SECONDS.sleep(2);
+
+        // edit a product
+        transreceiver.send("1/3/CcG/Toys/9.99", 1);
+        TimeUnit.SECONDS.sleep(2);
+
+        // print all
+        transreceiver.send("4", 1);
+        TimeUnit.SECONDS.sleep(2);
+
+        // remove a product
+        transreceiver.send("2/3", 1);
+        TimeUnit.SECONDS.sleep(2);
+
+        // print all
+        transreceiver.send("4", 1);
+
     }
 
     private static void executeRequest(int requestor_port, String data) throws IOException{
