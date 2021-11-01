@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.text.BreakIterator;
 import java.util.HashMap;
 
 /*
@@ -21,9 +22,58 @@ Database can:
 - Send error messages to broker
 */
 public class DataBase {
-    HashMap<Integer, Product> products;
+    private static HashMap<Integer, Product> products;
+   
+     private static SenderReceiver transreceiver;
+    public static void main(String[] args) throws IOException {
+        
+        System.out.println("DataBase turned on");
 
-    private void addProduct( String name, String section, int idCode, double price){
+        int receiverPort =  Integer.parseInt(args[0]);
+        transreceiver = new SenderReceiver(receiverPort, "Database");
+
+        String request = transreceiver.receive(); // receive request
+        DataBaseRecThread backup = new DataBaseRecThread(); // create new "back up thread" to receive while we print
+        backup.start();
+        executeRequest(request);
+    }
+
+    private static void executeRequest(String data) throws NumberFormatException, IOException{
+        
+
+        String[] splitData = data.split("/");
+        int request = Integer.parseInt(splitData[0]);
+        // idCode+"/"+name+"/"+section+"/"+price
+        switch(request){
+            case 0:
+                addProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
+                break;
+            case 1:
+                updateProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
+                break;
+            case 2:
+                removeProduct(Integer.parseInt(splitData[1]));
+                break;
+            case 3:
+                serve(Integer.parseInt(splitData[1]));
+                break;
+        }
+    }
+    private static class DataBaseRecThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                String request = transreceiver.receive();
+                DataBaseRecThread backup = new DataBaseRecThread();
+                backup.start();
+                executeRequest(request);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private static void addProduct( int idCode, String name, String section,  double price){
         
         if(!products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
@@ -37,7 +87,7 @@ public class DataBase {
         }
     }
 
-    private void updateProduct( String name, String section, int idCode, double price){
+    private static void updateProduct(int idCode, String name, String section, double price){
         
         if(products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
@@ -51,13 +101,26 @@ public class DataBase {
         }
     }
 
-    private void removeProduct(String section, int idCode){
-        if(products.containsKey(section)){
+    private static void removeProduct( int idCode){
+        if(products.containsKey(idCode)){
             products.remove(idCode);
             
             // TODO ask broker to update subs to this section
         }
 
+    }
+
+    private static void serve(int idCode) throws IOException{
+        // TODO send to broker product with matching idCode
+        Product requestedProduct = products.get(idCode);
+        transreceiver.send(products.toString(), 1);
+
+    }
+
+    private static void printAll(){
+        for(Integer key : products.keySet()){
+            System.out.println(products.get(key).toString());
+        }
     }
 
     
@@ -75,6 +138,10 @@ public class DataBase {
             this.section = section;
             this.idCode = idCode;
             this.price = price;
+        }
+
+        public String toString(){
+            return idCode+"/"+name+"/"+section+"/"+price;
         }
     }
 
