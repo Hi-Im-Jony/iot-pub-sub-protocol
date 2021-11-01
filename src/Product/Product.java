@@ -9,8 +9,9 @@ public class Product {
     public int idCode;
     public float price;
 
-    Product(String name, int idCode, float price){
+    Product(String name, String section, int idCode, float price){
         this.name = name;
+        this.section = section;
         this.idCode = idCode;
         this.price = price;
     }
