@@ -17,7 +17,7 @@ public class Computer {
         // print item details to console (ie, displaying details on computer screen)
     }
 
-    private void addProduct(Product product){
+    private void addProduct(int idCode, String name, String section,  double price){
         // TODO add product to db via broker
         // print success message to console
     }
@@ -27,7 +27,7 @@ public class Computer {
         // print success message to console
     }
 
-    private void editProduct(int idCode, Product editedProduct){
+    private void editProduct(int idCode, String name, String section,  double price){
         // TODO edit product from db via broker
         // print success message to console
     }
