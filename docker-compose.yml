@@ -3,12 +3,12 @@ version: "3"
 services:
   database:
     build: src/DataBase/
-    command: java DataBase.java 1
+    command: java DataBase.java
     network_mode: host
 
   # broker:
   #   build: src/Broker/
-  #   command: java Broker.java 2
+  #   command: java Broker.java
   #   network_mode: host
 
   printer:
