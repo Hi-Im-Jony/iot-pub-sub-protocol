@@ -19,18 +19,18 @@ public class Broker {
     
 	static final int MTU = 1500;
 
-    static SenderReceiver sender;
+    static SenderReceiver transreceiver;
 
     static HashMap<Integer, ArrayList<Integer>> topicSubscribers;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        sender = new SenderReceiver(0, "Broker"); // hardcoded receiver port because there is only one broker
+        transreceiver = new SenderReceiver(2, "Broker"); // hardcoded receiver port because there is only one broker
         
         for(int i = 0; i<10;i++){
-            String payload = sender.buildPayload("", "Random Data: "+i);
-            sender.send(payload, 2);
-            TimeUnit.SECONDS.sleep(1);
+            String payload = transreceiver.buildPayload("", "Random Data: "+i);
+            transreceiver.send(payload, 1);
+            TimeUnit.SECONDS.sleep(2);
         }
     }
 
