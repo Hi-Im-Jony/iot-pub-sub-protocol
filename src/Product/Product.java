@@ -7,9 +7,9 @@ public class Product {
     public String name;
     public String section;
     public int idCode;
-    public float price;
+    public double price;
 
-    Product(String name, String section, int idCode, float price){
+    Product(String name, String section, int idCode, double price){
         this.name = name;
         this.section = section;
         this.idCode = idCode;
