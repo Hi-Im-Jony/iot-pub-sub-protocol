@@ -25,10 +25,10 @@ services:
   #     build: src/SenderReceiver/
   #     command: java SenderReceiver.java 1 0 0
   #     network_mode: host
-  broker:
-    build: src/Broker/
-    command: java Broker.java
-    network_mode: host
+  # broker:
+  #   build: src/Broker/
+  #   command: java Broker.java
+  #   network_mode: host
 
   printer:
     build: src/Printer/
