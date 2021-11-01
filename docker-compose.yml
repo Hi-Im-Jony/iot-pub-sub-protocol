@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  #   sender-1:
+  #     build: src/SenderReceiver/
+  #     command: java SenderReceiver.java 0 2 1
+  #     network_mode: host
+
+  #   sender-2:
+  #     build: src/SenderReceiver/
+  #     command: java SenderReceiver.java 0 2 2
+  #     network_mode: host
+
+  #   sender-3:
+  #     build: src/SenderReceiver/
+  #     command: java SenderReceiver.java 0 2 3
+  #     network_mode: host
+
+  # broker:
+  #   build: src/Broker/
+  #   command: java Broker.java 2 0 0
+  #   network_mode: host
+
+  #   dashboard:
+  #     build: src/SenderReceiver/
+  #     command: java SenderReceiver.java 1 0 0
+  #     network_mode: host
+  # broker:
+  #   build: src/Broker/
+  #   command: java Broker.java
+  #   network_mode: host
+
+  printer:
+    build: src/Printer/
+    command: java Printer.java 2
+    network_mode: host
+
+  tcpdump:
+    image: kaazing/tcpdump
+    network_mode: "host"
+    volumes:
+      - ./tcpdump:/tcpdump
