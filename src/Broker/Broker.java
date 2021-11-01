@@ -1,11 +1,15 @@
 package Broker;
 
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import SenderReceiver.SenderReceiver;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 /* 
 The broker is the middle man in this network. 
 It receives packets with requests from various clients, and tries to fulfill those requests.
@@ -23,86 +27,80 @@ public class Broker {
 
     static HashMap<Integer, ArrayList<Integer>> topicSubscribers;
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-
-        transreceiver = new SenderReceiver(2, "Broker"); // hardcoded receiver port because there is only one broker
+   public static void main(String[] args) throws IOException {
         
-        // create 5 products
-        transreceiver.send("0/1/Aaaa/Toys/9.99", 1);
-        TimeUnit.SECONDS.sleep(2);
-        transreceiver.send("0/2/Bbbb/Toys/8.99", 1);
-        TimeUnit.SECONDS.sleep(2);
-        transreceiver.send("0/3/Cc/Cosmetics/7.99", 1);
-        TimeUnit.SECONDS.sleep(2);
-        transreceiver.send("0/4/Dddd/Cosmetics/5.99", 1);
-        TimeUnit.SECONDS.sleep(2);
-        transreceiver.send("0/5/Eee/Cosmetics/4.99", 1);
-        TimeUnit.SECONDS.sleep(2);
+        System.out.println("Broker turned on");
+        topicSubscribers = new HashMap<>();
 
-        // print all
-        transreceiver.send("4", 1);
-        TimeUnit.SECONDS.sleep(2);
+        transreceiver = new SenderReceiver(2, "Broker"); // hardcoded address cause only one broker
 
-        // edit a product
-        transreceiver.send("1/3/CcG/Toys/9.99", 1);
-        TimeUnit.SECONDS.sleep(2);
+        // start listening for packets
+        String request = transreceiver.receive(); // execution is blocked here until a packet is received
 
-        // print all
-        transreceiver.send("4", 1);
-        TimeUnit.SECONDS.sleep(2);
+        BrokerReceiverThread backup = new BrokerReceiverThread(); // create new "back up thread" to receive while we execute the request
+        backup.start();
 
-        // remove a product
-        transreceiver.send("2/3", 1);
-        TimeUnit.SECONDS.sleep(2);
-
-        // print all
-        transreceiver.send("4", 1);
-
+        executeRequest(request);
     }
+    private static class BrokerReceiverThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                String request = transreceiver.receive();
 
-    private static void executeRequest(int requestor_port, String data) throws IOException{
-        int request = data.charAt(0) - 48; // turn ASCII value into int value
-        int topic = data.charAt(1) - 48;
-        String info = data.substring(2, data.length()-1);
-        //System.out.println("Request is: "+ request);
-        switch(request){
-            case 0:
-                // subscribe to a topic
-                // System.out.print("Subbing");
-                subscibe(requestor_port, topic);
-                break;
-            case 1:
-                // unsubscribe from a topic
-               // System.out.print("Un-subbing");
-                unsubscribe(requestor_port, topic);
-                break;
-            case 2:
-                // publish data about a topic
-                // System.out.print("Publishing");
-                publish(topic, info);
-                break;
+                BrokerReceiverThread backup = new BrokerReceiverThread();
+                backup.start();
+
+                executeRequest(request);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private static void subscibe(int requestor_port, int topic){
+    private static void executeRequest(String data) throws NumberFormatException, IOException{
+        
+        String[] splitData = data.split("/"); // idCode+"/"+name+"/"+section+"/"+price
+        int request = Integer.parseInt(splitData[0]);
+        System.out.println("All good 1");
+        switch(request){
+            case 0:
+                //addProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
+                break;
+            case 1:
+                // updateProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
+                break;
+            case 2:
+                //removeProduct(Integer.parseInt(splitData[1]));
+                break;
+            case 3:
+                //serve(Integer.parseInt(splitData[1]));
+                break;
+            case 4:
+                //printAll();
+                break;
+        }
+    }
+    private static void subscribe(int requestorPort, int topic){
         //System.out.println("Executing 'subscribe'");
         ArrayList<Integer> subs = topicSubscribers.get(topic);
         if(subs != null)
-            subs.add(requestor_port);
+            subs.add(requestorPort);
         else{
             subs = new ArrayList<Integer>();
-            subs.add(requestor_port);
+            subs.add(requestorPort);
             topicSubscribers.put(topic, subs);
         }
     }
 
-    private static void unsubscribe(int requestor_port, int topic){
+    private static void unsubscribe(int requestorPort, int topic){
         //System.out.println("Executing 'unsub'");
         ArrayList<Integer> subs = topicSubscribers.get(topic);
 
         if(subs != null)
             for(int i = 0; i<subs.size(); i++){
-                if(subs.get(i) == requestor_port){
+                if(subs.get(i) == requestorPort){
                     subs.remove(i);
                     break;
                 }
@@ -111,5 +109,64 @@ public class Broker {
 
     private static void publish(int topic, String data) throws IOException{
        // TODO publish data to subs of topic
+    }
+
+    
+    // Class that can send and/or receive udp packets
+    private static class SenderReceiver{
+        
+        static final int MTU = 1500;
+
+        private DatagramSocket receiverSocket;
+        private DatagramSocket senderSocket;
+
+        private String owner;
+
+        
+        public SenderReceiver(int receiverPort, String owner) throws IOException{
+
+            InetAddress address = InetAddress.getLocalHost();
+
+            this.owner = owner;
+
+            senderSocket = new DatagramSocket();
+            receiverSocket= new DatagramSocket(receiverPort, address);
+            
+        }
+        public String receive() throws IOException{
+            
+            // create buffer for data, packet and receiverSocket
+            byte[] buffer= new byte[MTU];
+            DatagramPacket packet= new DatagramPacket(buffer, buffer.length);
+        
+            receiverSocket.receive(packet);
+
+            // extract data from packet
+            buffer= packet.getData();
+            ByteArrayInputStream bstream= new ByteArrayInputStream(buffer);
+            ObjectInputStream  ostream= new ObjectInputStream(bstream);
+
+            
+            String data =  ostream.readUTF();
+            return data;
+        }
+
+        public void send(String payload, int dest) throws IOException{
+            
+            InetAddress address= InetAddress.getLocalHost();   
+            int port= dest;                       
+        
+            ByteArrayOutputStream bstream= new ByteArrayOutputStream();
+            ObjectOutputStream ostream= new ObjectOutputStream(bstream);
+
+            ostream.writeUTF(payload);
+            ostream.flush();
+            
+            byte[] buffer = bstream.toByteArray();
+            // create packet addressed to destination
+            DatagramPacket packet= new DatagramPacket(buffer, buffer.length, address, port);
+            senderSocket.send(packet);
+            
+        }
     }
 }
