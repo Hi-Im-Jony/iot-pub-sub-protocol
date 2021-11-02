@@ -102,7 +102,7 @@ public class Computer {
         // change section
         editProduct(2, "CCC", "Pets", 9.99);
         TimeUnit.SECONDS.sleep(4);
-        System.out.println("Auto finished");
+        System.out.println("Computer Demo Finished");
         
     }
 
