@@ -89,8 +89,8 @@ public class DataBase {
         if(!products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
-            
-            transreceiver.send("pub:"+product.section, BROKER_PORT); // ask broker to update subs to this section
+            String update = "NEW PRODUCT ADDED TO YOUR SECTION; "+product.toString();
+            transreceiver.send("pub:"+product.section+"/"+update, BROKER_PORT); // ask broker to update subs to this section
         
         }
         else{
@@ -103,8 +103,8 @@ public class DataBase {
         if(products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
             products.put(product.idCode, product);
-            
-            transreceiver.send("pub:"+product.section, BROKER_PORT); // ask broker to update subs to this section
+            String update = "PRODUCT ON YOUR SECTION HAS BEEN MODIFIED;"+product.toString();
+            transreceiver.send("pub:"+product.section+"/"+update, BROKER_PORT); // ask broker to update subs to this section
         }
         else{
             transreceiver.send("serve:Error, requested product (id code = "+idCode+") doesn't exist:"+requestorPort, BROKER_PORT);
@@ -115,9 +115,11 @@ public class DataBase {
         if(products.containsKey(idCode)){
             String section = products.get(idCode).section;
 
+            String update = "PRODUCT ON YOUR SECTION HAS BEEN REMOVED;"+products.get(idCode).toString();
             products.remove(idCode);
             
-            transreceiver.send("pub:"+section, 2); // ask broker to update subs to this section
+            
+            transreceiver.send("pub:"+section+"/"+update, BROKER_PORT); // ask broker to update subs to this section
         }
 
     }
