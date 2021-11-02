@@ -28,7 +28,7 @@ public class Printer{
 
         // connect to broker by picking a section to sub to
         String sectionSubbingTo = args[0];
-        subTo(sectionSubbingTo);
+        connect(sectionSubbingTo);
 
         String data = transreceiver.receive(); // receive data
         PrinterReceiverThread backup = new PrinterReceiverThread(); // create new "back up thread" to receive while we print
@@ -36,7 +36,7 @@ public class Printer{
         printSEL(data, 0.0);
     }
 
-    private static void subTo(String section) throws IOException{
+    private static void connect(String section) throws IOException{
         transreceiver.send("connect:"+section, BROKER_PORT);
     }
 
