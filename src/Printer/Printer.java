@@ -15,6 +15,8 @@ Printer can:
 - Print item SEL
 */
 public class Printer{
+    
+    static final int BROKER_PORT = 2;
 
     private static SenderReceiver receiver;
     public static void main(String[] args) throws IOException {

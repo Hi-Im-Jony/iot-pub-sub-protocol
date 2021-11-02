@@ -17,6 +17,9 @@ Company Computer can:
 - Print item SEL
 */
 public class Computer {
+    
+    static final int BROKER_PORT = 2;
+
     private static SenderReceiver transreceiver;
     public static void main(String[] args) throws IOException {
         
@@ -85,23 +88,23 @@ public class Computer {
     }
     
     private static void requestProductDetails(int idCode) throws IOException{
-        transreceiver.send("reqprod:"+idCode, 2);
+        transreceiver.send("reqprod:"+idCode, BROKER_PORT);
     }
 
     private static void addProduct(int idCode, String name, String section,  double price) throws IOException{
-        transreceiver.send("addprod:"+idCode+"/"+name+"/"+section+"/"+price, 2);
+        transreceiver.send("addprod:"+idCode+"/"+name+"/"+section+"/"+price, BROKER_PORT);
     }
 
     private void removeProduct(int idCode) throws IOException{
-        transreceiver.send("remprod:"+idCode, 2);
+        transreceiver.send("remprod:"+idCode, BROKER_PORT);
     }
 
     private void editProduct(int idCode, String name, String section,  double price) throws IOException{
-        transreceiver.send("ediprod:"+idCode+"/"+name+"/"+section+"/"+price, 2);
+        transreceiver.send("ediprod:"+idCode+"/"+name+"/"+section+"/"+price, BROKER_PORT);
     }
 
     private void printProductSEL(int idCode) throws IOException{
-        transreceiver.send("print:"+idCode, 2);
+        transreceiver.send("print:"+idCode, BROKER_PORT);
     }
 
      // Class that can send and/or receive udp packets

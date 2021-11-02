@@ -20,6 +20,8 @@ Broker can:
 - Publish data to subs of topic
 */
 public class Broker {
+
+    static final int DB_PORT = 1;
     
 	static final int MTU = 1500;
 
@@ -79,7 +81,7 @@ public class Broker {
             case "remprod":
             case "reqprod":
             case "showall":
-                transreceiver.send(data, 1);
+                transreceiver.send(data, DB_PORT);
                 break;
             
                 

@@ -21,6 +21,9 @@ Database can:
 - Send error messages to broker
 */
 public class DataBase {
+
+    static final int BROKER_PORT = 2;
+
     private static HashMap<Integer, Product> products;
    
     private static SenderReceiver transreceiver;
@@ -56,9 +59,10 @@ public class DataBase {
     }
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split(":"); // request:idCode/name/section/price
+        String[] splitData = data.split(":"); // request:idCode/name/section/price:requestorPort
         String request = splitData[0];
         String[] productDetails = splitData[1].split("/");
+        int requestorPort = Integer.parseInt(splitData[2]);
         
         switch(request){
             case "addprod":
@@ -71,7 +75,7 @@ public class DataBase {
                 removeProduct(Integer.parseInt(productDetails[0]));
                 break;
             case "reqprod":
-                serve(Integer.parseInt(productDetails[0]));
+                serve(Integer.parseInt(productDetails[0]), requestorPort);
                 break;
             case "showall":
                 showAll();
@@ -85,11 +89,11 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
             
-            transreceiver.send("updatesubs:"+product.section, 2); // ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+product.section, BROKER_PORT); // ask broker to update subs to this section
         
         }
         else{
-            transreceiver.send("101: Product exists", 2); // send error message to broker "Product exists"
+            transreceiver.send("101: Product exists", BROKER_PORT); // send error message to broker "Product exists"
         }
     }
 
@@ -99,10 +103,10 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(product.idCode, product);
             
-            transreceiver.send("updatesubs:"+product.section, 2); // ask broker to update subs to this section
+            transreceiver.send("updatesubs:"+product.section, BROKER_PORT); // ask broker to update subs to this section
         }
         else{
-            transreceiver.send("102: Product doesn't exist", 2); // send error message to broker "Product doesn't exist"
+            transreceiver.send("102: Product doesn't exist", BROKER_PORT); // send error message to broker "Product doesn't exist"
         }
     }
 
@@ -117,13 +121,13 @@ public class DataBase {
 
     }
 
-    private static void serve(int idCode) throws IOException{
+    private static void serve(int idCode, int destPort) throws IOException{
         if(products.containsKey(idCode)){
             Product requestedProduct = products.get(idCode);
-            transreceiver.send(requestedProduct.toString(), 1);
+            transreceiver.send("serve:"+requestedProduct.toString()+":"+destPort, BROKER_PORT);
         }
         else{
-            transreceiver.send("102: Product doesn't exist", 1); // send error message to broker "Product doesn't exist
+            transreceiver.send("102: Product doesn't exist", BROKER_PORT); // send error message to broker "Product doesn't exist
         }
 
     }

@@ -10,6 +10,9 @@ After finding an item in the db, Scanner can:
     - Get notified when item in section gets added/edited/removed
 */
 public class Scanner {
+
+    static final int DB_ADDRESS = 1;
+    static final int BROKER_ADDRESS = 2;
     
     private void scan(int code){
         // TODO
