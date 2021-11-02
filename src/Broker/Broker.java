@@ -61,24 +61,16 @@ public class Broker {
 
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split("/"); // idCode+"/"+name+"/"+section+"/"+price
-        int request = Integer.parseInt(splitData[0]);
-        System.out.println("All good 1");
+        String[] splitData = data.split(":"); // request:idCode/name/section/price
+        String request = splitData[0];
         switch(request){
-            case 0:
-                //addProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
-                break;
-            case 1:
-                // updateProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
-                break;
-            case 2:
-                //removeProduct(Integer.parseInt(splitData[1]));
-                break;
-            case 3:
-                //serve(Integer.parseInt(splitData[1]));
-                break;
-            case 4:
-                //printAll();
+            // cases to send to DataBase
+            case "addprod":
+            case "ediprod":
+            case "remprod":
+            case "reqprod":
+            case "showall":
+                transreceiver.send(data, 1);
                 break;
         }
     }
@@ -145,7 +137,6 @@ public class Broker {
             buffer= packet.getData();
             ByteArrayInputStream bstream= new ByteArrayInputStream(buffer);
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
-
             
             String data =  ostream.readUTF();
             return data;
