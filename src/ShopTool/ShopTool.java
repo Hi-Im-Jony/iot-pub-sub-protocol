@@ -45,8 +45,34 @@ public class ShopTool {
 
     }
 
-    private static void demo(){
+    private static void demo() throws IOException, InterruptedException{
         // TODO
+        TimeUnit.SECONDS.sleep(10); // wait for Computer to add some items to db
+
+        // "scan" some codes instore
+        scan(0);
+        TimeUnit.SECONDS.sleep(5);
+        scan(1);
+        TimeUnit.SECONDS.sleep(5);
+
+        // "scan" incorrect code - see what happens
+        scan(1089); 
+        TimeUnit.SECONDS.sleep(5);
+        scan(4);
+        TimeUnit.SECONDS.sleep(5);
+
+        sub("Games");
+        TimeUnit.SECONDS.sleep(10);
+
+        sub("Toys");
+        TimeUnit.SECONDS.sleep(10);
+
+        unsub("Games");
+        TimeUnit.SECONDS.sleep(10);
+
+        scan(1);
+        TimeUnit.SECONDS.sleep(1);
+        printProductSEL(cache);
     }
 
     private static class ReceiverThread extends Thread{
