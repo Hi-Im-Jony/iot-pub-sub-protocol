@@ -93,7 +93,8 @@ public class Computer {
         // change section
         editProduct(2, "CCC", "Pets", 9.99);
         TimeUnit.SECONDS.sleep(4);
-        printProductSEL(2);
+        String details = requestProductDetails(0);
+        printProductSEL(details);
     }
 
     private static class CopmuterReceiverThread extends Thread{
@@ -129,8 +130,8 @@ public class Computer {
         transreceiver.send("ediprod:"+idCode+"/"+name+"/"+section+"/"+price, BROKER_PORT);
     }
 
-    private static void printProductSEL(int idCode) throws IOException{
-        transreceiver.send("print:"+idCode, BROKER_PORT);
+    private static void printProductSEL(String info) throws IOException{
+        transreceiver.send("print:"+info, BROKER_PORT);
     }
 
      // Class that can send and/or receive udp packets
