@@ -90,7 +90,7 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
             
-            transreceiver.send("updatesubs:"+product.section, BROKER_PORT); // ask broker to update subs to this section
+            transreceiver.send("pub:"+product.section, BROKER_PORT); // ask broker to update subs to this section
         
         }
         else{
@@ -104,7 +104,7 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(product.idCode, product);
             
-            transreceiver.send("updatesubs:"+product.section, BROKER_PORT); // ask broker to update subs to this section
+            transreceiver.send("pub:"+product.section, BROKER_PORT); // ask broker to update subs to this section
         }
         else{
             transreceiver.send("serve:Error, requested product (id code = "+idCode+") doesn't exist:"+requestorPort, BROKER_PORT);
@@ -117,7 +117,7 @@ public class DataBase {
 
             products.remove(idCode);
             
-            transreceiver.send("updatesubs:"+section, 2); // ask broker to update subs to this section
+            transreceiver.send("pub:"+section, 2); // ask broker to update subs to this section
         }
 
     }
