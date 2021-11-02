@@ -57,12 +57,13 @@ public class Computer {
         String request = splitData[0];
 
         switch(request){
-            case "prodDet":
+            case "showprod":
                 String[] productDetails = splitData[1].split("/");
                 System.out.println("\n\n\n----------------------");
                 System.out.println("      |  Product details   ");
                 System.out.println("      | -------------------");
                 System.out.println("      | Name:"+productDetails[1]);
+                System.out.println("      | Section:"+productDetails[2]);
                 System.out.println("      | Price:"+productDetails[3]);
                 System.out.println("      | -------------------|");
                 break;
