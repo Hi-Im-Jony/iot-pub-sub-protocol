@@ -22,6 +22,7 @@ public class Computer {
     static final int BROKER_PORT = 2;
 
     private static Transreceiver transreceiver;
+    private static String currentProduct;
     public static void main(String[] args) throws IOException, InterruptedException {
         
         System.out.println("Computer turned on");
@@ -37,26 +38,57 @@ public class Computer {
             operateAutomaticlly();
     }
 
+    private static class CopmuterReceiverThread extends Thread{
+        @Override
+        public void run(){
+            try {
+                String input = transreceiver.receive();
+
+                CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
+                receiverThread.start();
+
+                interpretInput(input);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void interpretInput(String input){
+        int count = input.length() - input.replaceAll("/", "").length(); // count of "/" in a our input
+        
+        if(count==3){
+            // input is a product we have requested for
+            System.out.println("Count is:" + count);
+            currentProduct = input;
+        }
+    }
     // manual operation of "Computer" via terminal
     private static void operateManually(){
     }
 
     // automatic, hardcoded operation of "Computer"
     private static void operateAutomaticlly() throws IOException, InterruptedException{
-        requestProductDetails(2);
-        TimeUnit.SECONDS.sleep(4);
+        // requestProductDetails(2);
+        // TimeUnit.SECONDS.sleep(4);
 
-        // attempting to edit non-existent product
-        editProduct(2, "name", "section", 9.99);
-        TimeUnit.SECONDS.sleep(4);
+        // // attempting to edit non-existent product
+        // editProduct(2, "name", "section", 9.99);
+        // TimeUnit.SECONDS.sleep(4);
 
         addProduct(0,"A","Games",19.99);
 
         // add product with duplicate id
-        addProduct(0,"B","Games",19.99);
-        TimeUnit.SECONDS.sleep(4);
-
+        // addProduct(0,"B","Games",19.99);
+        // TimeUnit.SECONDS.sleep(4);
+        System.out.println("Check 1");
         requestProductDetails(0);
+        
+        TimeUnit.SECONDS.sleep(4);
+        System.out.println("Check 5: "+currentProduct);
+        printProductSEL(currentProduct);
+        System.out.println("Check 6:");
         TimeUnit.SECONDS.sleep(4);
 
         // remove non-existent product
@@ -93,29 +125,14 @@ public class Computer {
         // change section
         editProduct(2, "CCC", "Pets", 9.99);
         TimeUnit.SECONDS.sleep(4);
-        String details = requestProductDetails(0);
-        printProductSEL(details);
+        
     }
 
-    private static class CopmuterReceiverThread extends Thread{
-        @Override
-        public void run(){
-            try {
-                transreceiver.receive();
-
-                CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
-                receiverThread.start();
-                
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
     
-    private static synchronized String requestProductDetails(int idCode) throws IOException{
+    
+    
+    private static synchronized void requestProductDetails(int idCode) throws IOException{
         transreceiver.send("reqprod:"+idCode, BROKER_PORT);
-        String product = transreceiver.receive();
-        return product;
     }
 
     private static void addProduct(int idCode, String name, String section,  double price) throws IOException{
@@ -131,7 +148,8 @@ public class Computer {
     }
 
     private static void printProductSEL(String info) throws IOException{
-        transreceiver.send("print:"+info, BROKER_PORT);
+        if(info!=null)
+            transreceiver.send("print:"+info, BROKER_PORT);
     }
 
      // Class that can send and/or receive udp packets
