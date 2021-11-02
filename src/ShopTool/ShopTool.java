@@ -28,11 +28,6 @@ public class ShopTool {
     private static Transreceiver transreceiver;
     private static String cache;
     public static void main(String[] args) throws IOException, InterruptedException {
-        
-        // subscribe to any topics told to sub to
-        if(args.length>0)
-            for(String topic: args)
-                sub(topic);
             
         System.out.println("ShopTool turned on");
 
@@ -41,11 +36,11 @@ public class ShopTool {
         ReceiverThread receiverThread = new ReceiverThread(); // create new "back up thread" to receive while we print
         receiverThread.start();
 
-        demo();
+        demo(args[0]); // scanner will sub to the topic given when run in cmd
 
     }
 
-    private static void demo() throws IOException, InterruptedException{
+    private static void demo(String topic) throws IOException, InterruptedException{
         // TODO
         TimeUnit.SECONDS.sleep(10); // wait for Computer to add some items to db
 
@@ -61,13 +56,10 @@ public class ShopTool {
         scan(4);
         TimeUnit.SECONDS.sleep(5);
 
-        sub("Games");
+        sub(topic);
         TimeUnit.SECONDS.sleep(10);
 
-        sub("Toys");
-        TimeUnit.SECONDS.sleep(10);
-
-        unsub("Games");
+        unsub(topic);
         TimeUnit.SECONDS.sleep(10);
 
         scan(1);
