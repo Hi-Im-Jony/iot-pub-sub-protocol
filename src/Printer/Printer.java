@@ -33,17 +33,16 @@ public class Printer{
         String data = transreceiver.receive(); // receive data
         PrinterReceiverThread backup = new PrinterReceiverThread(); // create new "back up thread" to receive while we print
         backup.start();
-        printSEL(data, 0.0);
+        printSEL(data);
     }
 
     private static void connect(String section) throws IOException{
         transreceiver.send("connect:"+section, BROKER_PORT);
     }
 
-    private static void printSEL(String name, double price){
+    private static void printSEL(String data){
         System.out.println("\n*********************************"
-                        +"\n          Name:"+name+"               "
-                        +"\n          Price: "+price+"               "
+                        +"\n          "+data+"               "
                         +"\n*********************************\n");
     }
     private static class PrinterReceiverThread extends Thread{
@@ -53,7 +52,7 @@ public class Printer{
                 String data = transreceiver.receive();
                 PrinterReceiverThread backup = new PrinterReceiverThread();
                 backup.start();
-                printSEL(data, 0.0);
+                printSEL(data);
                 
             } catch (IOException e) {
                 e.printStackTrace();
