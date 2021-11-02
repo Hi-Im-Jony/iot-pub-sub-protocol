@@ -32,7 +32,7 @@ public class Broker {
         System.out.println("Broker turned on");
         topicSubscribers = new HashMap<>();
 
-        transreceiver = new SenderReceiver(2, "Broker"); // hardcoded address cause only one broker
+        transreceiver = new SenderReceiver(2); // hardcoded address cause only one broker
 
         // start listening for packets
         String request = transreceiver.receive(); // execution is blocked here until a packet is received
@@ -61,16 +61,23 @@ public class Broker {
 
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split(":"); // request:idCode/name/section/price
+        String[] splitData = data.split(":"); // request:idCode/name/section/price:requestorPort
         String request = splitData[0];
         switch(request){
+            // cases Broker should deal with
+            case "sub":
+            case"unsub":
+            case "updatesubs":
+                break;
             // cases to send to DataBase
             case "addprod":
             case "ediprod":
             case "remprod":
+                transreceiver.send(data, 1);
+                break;
             case "reqprod":
             case "showall":
-                transreceiver.send(data, 1);
+
                 break;
         }
     }
@@ -111,16 +118,10 @@ public class Broker {
 
         private DatagramSocket receiverSocket;
         private DatagramSocket senderSocket;
-
-        private String owner;
-
         
-        public SenderReceiver(int receiverPort, String owner) throws IOException{
+        public SenderReceiver(int receiverPort) throws IOException{
 
             InetAddress address = InetAddress.getLocalHost();
-
-            this.owner = owner;
-
             senderSocket = new DatagramSocket();
             receiverSocket= new DatagramSocket(receiverPort, address);
             
@@ -139,6 +140,7 @@ public class Broker {
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
             
             String data =  ostream.readUTF();
+            data = data+":"+packet.getPort();
             return data;
         }
 
