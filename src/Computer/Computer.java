@@ -22,7 +22,7 @@ public class Computer {
     static final int BROKER_PORT = 2;
 
     private static Transreceiver transreceiver;
-    private static String currentProduct;
+    private static String cache;
     public static void main(String[] args) throws IOException, InterruptedException {
         
         System.out.println("Computer turned on");
@@ -42,12 +42,12 @@ public class Computer {
         @Override
         public void run(){
             try {
-                String input = transreceiver.receive();
+                cache = transreceiver.receive();
 
                 CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
                 receiverThread.start();
 
-                interpretInput(input);
+                
                 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -60,8 +60,7 @@ public class Computer {
         
         if(count==3){
             // input is a product we have requested for
-            System.out.println("Count is:" + count);
-            currentProduct = input;
+            cache = input;
         }
     }
     // manual operation of "Computer" via terminal
@@ -82,13 +81,9 @@ public class Computer {
         // add product with duplicate id
         // addProduct(0,"B","Games",19.99);
         // TimeUnit.SECONDS.sleep(4);
-        System.out.println("Check 1");
         requestProductDetails(0);
         
-        TimeUnit.SECONDS.sleep(4);
-        System.out.println("Check 5: "+currentProduct);
-        printProductSEL(currentProduct);
-        System.out.println("Check 6:");
+        printProductSEL(cache);
         TimeUnit.SECONDS.sleep(4);
 
         // remove non-existent product
@@ -125,14 +120,16 @@ public class Computer {
         // change section
         editProduct(2, "CCC", "Pets", 9.99);
         TimeUnit.SECONDS.sleep(4);
+        System.out.println("Auto finished");
         
     }
 
     
     
     
-    private static synchronized void requestProductDetails(int idCode) throws IOException{
+    private static synchronized void requestProductDetails(int idCode) throws IOException, InterruptedException{
         transreceiver.send("reqprod:"+idCode, BROKER_PORT);
+        TimeUnit.MILLISECONDS.sleep(500); // allow time to receive, equivalent to a "loading" screen
     }
 
     private static void addProduct(int idCode, String name, String section,  double price) throws IOException{
