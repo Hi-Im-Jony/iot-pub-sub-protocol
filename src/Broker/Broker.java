@@ -83,6 +83,8 @@ public class Broker {
             case "print": // info = id/name/section/price
                 String info = splitData[1];
                 String[] productInfo = info.split("/");
+                if(productInfo.length!=4)
+                    break;
                 String productSection = productInfo[2];
                 Stack<String> stack = printerStacks.get(productSection);
                 
@@ -104,7 +106,6 @@ public class Broker {
 
             case "serve": // ie, serve only one client based on a request, not same as publishing to subs
                 int destPort = Integer.parseInt(splitData[2]);
-                System.out.println("Sending DB response: \""+splitData[1]+  "\", to: "+destPort);
                 transreceiver.send(splitData[1], destPort);
                 break;
 
@@ -116,9 +117,6 @@ public class Broker {
             case "showall":
                 transreceiver.send(data, DB_PORT);
                 break;
-
-            
-            
         }
     }
 
