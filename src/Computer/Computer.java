@@ -42,7 +42,6 @@ public class Computer {
         switch(dataType){
             case "prod": // data represents a product
                 cache = splitData[1];
-                cache = cache.substring(5);
                 break;
         }
     }
