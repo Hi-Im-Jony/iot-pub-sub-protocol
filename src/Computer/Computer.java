@@ -169,7 +169,7 @@ public class Computer {
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
 
             String data =  ostream.readUTF();
-            System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
+            // System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
             return data;
         }
 

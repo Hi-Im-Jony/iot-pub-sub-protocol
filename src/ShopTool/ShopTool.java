@@ -50,8 +50,8 @@ public class ShopTool {
         // scan(1);
         // TimeUnit.SECONDS.sleep(5);
 
-        // // "scan" incorrect code - see what happens
-        // scan(1089); 
+        // "scan" incorrect code - see what happens
+        scan(1089); 
         // TimeUnit.SECONDS.sleep(5);
         // scan(4);
         // TimeUnit.SECONDS.sleep(5);
@@ -143,7 +143,7 @@ public class ShopTool {
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
 
             String data =  ostream.readUTF();
-            System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
+            // System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
             return data;
         }
 
