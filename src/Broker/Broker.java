@@ -73,7 +73,7 @@ public class Broker {
         String[] splitData = data.split(":"); // data = request:info:requestorPort
         String request = splitData[0];
         switch(request){
-            // cases Broker should deal with
+            // relevant to Printer
             case "connect": // connect:section:requestorPort
                 String section  = splitData[1];
                 int port = Integer.parseInt(splitData[2]);
@@ -99,23 +99,23 @@ public class Broker {
                 checkPrintStack(productSection);
                 break;
 
+            // relevant to Scanner
             case "sub":
             case"unsub":
             case "updatesubs":
                 break;
 
-            case "serve": // ie, serve only one client based on a request, not same as publishing to subs
-                int destPort = Integer.parseInt(splitData[2]);
-                transreceiver.send(splitData[1], destPort);
-                break;
-
-            // cases to send to DataBase
+            // relevant to DataBase
             case "addprod":
             case "ediprod":
             case "remprod":
             case "reqprod":
             case "showall":
                 transreceiver.send(data, DB_PORT);
+                break;
+            case "serve": // ie, serve only one client based on a request, not same as publishing to subs
+                int destPort = Integer.parseInt(splitData[2]);
+                transreceiver.send(splitData[1], destPort);
                 break;
         }
     }
