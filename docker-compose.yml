@@ -20,7 +20,14 @@ services:
     command: java Computer.java 1
     network_mode: host
 
-  printer:
+  games-printer:
+    depends_on:
+      - "broker"
+    build: src/Printer/
+    command: java Printer.java Games
+    network_mode: host
+
+  toy-printer:
     depends_on:
       - "broker"
     build: src/Printer/
