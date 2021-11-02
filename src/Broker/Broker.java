@@ -127,10 +127,10 @@ public class Broker {
             return;
         
         ArrayList<Integer> printerPorts = subscribedPrinters.get(section);
-        
+
         for(String request: printStack){
             for(Integer printerPort: printerPorts)
-                transreceiver.send(request, printerPort);
+                transreceiver.send(request, printerPort); // send to printer
         }
     }
 
@@ -141,8 +141,8 @@ public class Broker {
         else{
             subs = new ArrayList<Integer>();
             subs.add(requestorPort);
-            topicSubscribers.put(topic, subs);
         }
+        topicSubscribers.put(topic, subs);
     }
 
     private static void unsubscribe(int requestorPort, String topic){
