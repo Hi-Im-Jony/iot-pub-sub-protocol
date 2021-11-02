@@ -127,7 +127,7 @@ public class DataBase {
     private static synchronized void serve(int idCode, int destPort) throws IOException{
         if(products.containsKey(idCode)){
             Product requestedProduct = products.get(idCode);
-            transreceiver.send("serve:"+requestedProduct.toString()+":"+destPort, BROKER_PORT);
+            transreceiver.send("serve:"+"prod;"+requestedProduct.toString()+":"+destPort, BROKER_PORT);
         }
         else{
             transreceiver.send("serve:Error; requested product (id code = "+idCode+") doesn't exist:"+destPort, BROKER_PORT);
