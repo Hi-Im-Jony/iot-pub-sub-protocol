@@ -6,14 +6,25 @@ services:
     command: java DataBase.java
     network_mode: host
 
-  # broker:
-  #   build: src/Broker/
-  #   command: java Broker.java
-  #   network_mode: host
+  broker:
+    depends_on:
+      - "database"
+    build: src/Broker/
+    command: java Broker.java
+    network_mode: host
+
+  computer:
+    depends_on:
+      - "broker"
+    build: src/Computer
+    command: java Computer.java 3 1
+    network_mode: host
 
   printer:
+    depends_on:
+      - "broker"
     build: src/Printer/
-    command: java Printer.java 3
+    command: java Printer.java 4
     network_mode: host
 
   tcpdump:
