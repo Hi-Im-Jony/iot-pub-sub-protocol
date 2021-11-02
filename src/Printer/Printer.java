@@ -12,6 +12,8 @@ import java.net.InetAddress;
 /*
 A pseudo printer, will print item SEL's 
 Printer can:
+- Connect to Broker
+- Subscribe topic (ie, tell broker which section it will print for)
 - Print item SEL
 */
 public class Printer{
