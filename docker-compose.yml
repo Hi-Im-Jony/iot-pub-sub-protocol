@@ -34,18 +34,25 @@ services:
     command: java Printer.java Games
     network_mode: host
 
-  games-printer3:
-    depends_on:
-      - "broker"
-    build: src/Printer/
-    command: java Printer.java Games
-    network_mode: host
-
   toy-printer:
     depends_on:
       - "broker"
     build: src/Printer/
     command: java Printer.java Toys
+    network_mode: host
+
+  toys-tool:
+    depends_on:
+      - "broker"
+    build: src/ShopTool/
+    command: java ShopTool.java Toys
+    network_mode: host
+
+  games-tool:
+    depends_on:
+      - "broker"
+    build: src/ShopTool/
+    command: java ShopTool.java Games
     network_mode: host
 
   tcpdump:
