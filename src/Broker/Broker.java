@@ -80,6 +80,22 @@ public class Broker {
                 connect(port, section);
                 checkPrintStack(section);
                 break;
+            case "print": // info = id/name/section/price
+                String info = splitData[1];
+                String[] productInfo = info.split("/");
+                String productSection = productInfo[2];
+                Stack<String> stack = printerStacks.get(productSection);
+                
+                if(stack != null)
+                    stack.push(info);
+                else{
+                    stack = new Stack<>();
+                    stack.push(info);
+                }
+                printerStacks.put(productSection, stack);
+
+                checkPrintStack(productSection);
+                break;
 
             case "sub":
             case"unsub":
@@ -101,9 +117,8 @@ public class Broker {
                 transreceiver.send(data, DB_PORT);
                 break;
 
-            // cases to send to Printer
-            case "print":
-                transreceiver.send(data, 3);
+            
+            
         }
     }
 
