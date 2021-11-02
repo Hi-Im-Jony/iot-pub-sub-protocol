@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 
 /*
 A pseudo printer, will print item SEL's 
@@ -21,14 +22,17 @@ public class Printer{
     static final int BROKER_PORT = 2;
 
     private static Transreceiver transreceiver;
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         
-        System.out.println("Printer turned on");
+        
         transreceiver = new Transreceiver();
 
         // connect to broker by picking a section to sub to
         String sectionSubbingTo = args[0];
         connect(sectionSubbingTo);
+        if(sectionSubbingTo.equals("Games"))
+            TimeUnit.SECONDS.sleep(15); // for demo purposes, printers in the gaming section wont turn on for 10sec
+        System.out.println("Printer turned on");
 
         String data = transreceiver.receive(); // receive data
         PrinterReceiverThread backup = new PrinterReceiverThread(); // create new "back up thread" to receive while we print
@@ -40,7 +44,7 @@ public class Printer{
         transreceiver.send("connect:"+section, BROKER_PORT);
     }
 
-    private static void printSEL(String data){
+    private static synchronized void printSEL(String data){
         System.out.println("\n*********************************"
                         +"\n          "+data+"               "
                         +"\n*********************************\n");
