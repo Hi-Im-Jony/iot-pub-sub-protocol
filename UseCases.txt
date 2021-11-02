@@ -15,7 +15,7 @@ Company Computer can:
 - Add/Edit/Remove item in db
 - Print item SEL
 
-Scanner can:
+ShopTool can:
 - "Scan" qr/bar codes to check item details
 - Print item SEL
 - Subscribe to a "section" of the store (ie, sub to a topic)
