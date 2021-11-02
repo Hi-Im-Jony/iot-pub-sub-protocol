@@ -67,13 +67,13 @@ public class DataBase {
         
         switch(request){
             case "addprod":
-                addProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]));
+                addProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]), requestorPort);
                 break;
             case "ediprod":
-                updateProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]));
+                updateProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]),requestorPort);
                 break;
             case "remprod":
-                removeProduct(Integer.parseInt(productDetails[0]));
+                removeProduct(Integer.parseInt(productDetails[0])); // doesn't need requestor port as there isn't really a way to error here
                 break;
             case "reqprod":
                 serve(Integer.parseInt(productDetails[0]), requestorPort);
@@ -84,7 +84,7 @@ public class DataBase {
         }
     }
 
-    private static void addProduct( int idCode, String name, String section,  double price) throws IOException{
+    private static synchronized void addProduct( int idCode, String name, String section,  double price, int requestorPort) throws IOException{
         
         if(!products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
@@ -94,11 +94,11 @@ public class DataBase {
         
         }
         else{
-            transreceiver.send("101: Product exists", BROKER_PORT); // send error message to broker "Product exists"
+            transreceiver.send("serve:Error, requested product (id code = "+idCode+") already exists:"+requestorPort, BROKER_PORT);
         }
     }
 
-    private static void updateProduct(int idCode, String name, String section, double price) throws IOException{
+    private static synchronized void updateProduct(int idCode, String name, String section, double price, int requestorPort) throws IOException{
         
         if(products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
@@ -107,11 +107,11 @@ public class DataBase {
             transreceiver.send("updatesubs:"+product.section, BROKER_PORT); // ask broker to update subs to this section
         }
         else{
-            transreceiver.send("102: Product doesn't exist", BROKER_PORT); // send error message to broker "Product doesn't exist"
+            transreceiver.send("serve:Error, requested product (id code = "+idCode+") doesn't exist:"+requestorPort, BROKER_PORT);
         }
     }
 
-    private static void removeProduct( int idCode) throws IOException{
+    private static synchronized void removeProduct( int idCode) throws IOException{
         if(products.containsKey(idCode)){
             String section = products.get(idCode).section;
 
@@ -122,18 +122,18 @@ public class DataBase {
 
     }
 
-    private static void serve(int idCode, int destPort) throws IOException{
+    private static synchronized void serve(int idCode, int destPort) throws IOException{
         if(products.containsKey(idCode)){
             Product requestedProduct = products.get(idCode);
             transreceiver.send("serve:"+requestedProduct.toString()+":"+destPort, BROKER_PORT);
         }
         else{
-            transreceiver.send("102: Product doesn't exist", BROKER_PORT); // send error message to broker "Product doesn't exist
+            transreceiver.send("serve:Error, requested product (id code = "+idCode+") doesn't exist:"+destPort, BROKER_PORT);
         }
 
     }
 
-    private static void showAll(){
+    private static synchronized void showAll(){
         for(Integer key : products.keySet()){
             System.out.println(products.get(key).toString());
         }
