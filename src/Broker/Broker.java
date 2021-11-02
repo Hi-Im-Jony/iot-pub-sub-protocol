@@ -75,21 +75,10 @@ public class Broker {
         switch(request){
             // cases Broker should deal with
             case "connect": // connect:section:requestorPort
-                System.out.println("connecting printer");
-                String topic = splitData[1];
-                int requestorPort = Integer.parseInt(splitData[2]);
+                String section  = splitData[1];
+                int port = Integer.parseInt(splitData[2]);
 
-                ArrayList<Integer> subs = subscribedPrinters.get(topic);
-
-                if(subs != null)
-                    subs.add(requestorPort);
-                else{
-                    subs = new ArrayList<Integer>();
-                    subs.add(requestorPort);
-                }
-                
-                subscribedPrinters.put(topic, subs);
-                System.out.println("Printer connected");
+                connect(port, section);
                 break;
 
             case "sub":
@@ -118,7 +107,18 @@ public class Broker {
         }
     }
 
-  
+    private static void connect(int port, String section){
+         ArrayList<Integer> subs = subscribedPrinters.get(section);
+
+                if(subs != null)
+                    subs.add(port);
+                else{
+                    subs = new ArrayList<Integer>();
+                    subs.add(port);
+                }
+                
+                subscribedPrinters.put(section, subs);
+    }
 
     private static void subscribe(int requestorPort, String topic){
         ArrayList<Integer> subs = topicSubscribers.get(topic);
