@@ -108,10 +108,10 @@ public class Broker {
                 unsubscribe(port, splitData[1]);
                 break;
             case "pub": // publish to subscribers
-                String[] params = splitData[1].split("/");
+                String[] params = splitData[1].split("\\*");
                 String topic = params[0];
                 String message = params[1];
-                message.replaceAll(";", ":");
+                message = message.replaceAll(";", ": ");
                 publish(topic, message);
                 break;
 
@@ -125,6 +125,7 @@ public class Broker {
                 break;
             case "serve": // ie, serve only one client based on a request, not same as publishing to subs
                 int destPort = Integer.parseInt(splitData[2]);
+                splitData[2] = splitData[2].replaceAll(";", ":");
                 transreceiver.send(splitData[1], destPort);
                 break;
         }
