@@ -56,30 +56,31 @@ public class DataBase {
     }
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split("/"); // idCode+"/"+name+"/"+section+"/"+price
-        int request = Integer.parseInt(splitData[0]);
-        System.out.println("All good 1");
+        String[] splitData = data.split(":"); // request:idCode/name/section/price
+        String request = splitData[0];
+        String[] productDetails = splitData[1].split("/");
+        
         switch(request){
-            case 0:
-                addProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
+            case "addprod":
+                addProduct(Integer.parseInt(productDetails[1]), productDetails[2], productDetails[3], Double.parseDouble(productDetails[4]));
                 break;
-            case 1:
-                updateProduct(Integer.parseInt(splitData[1]), splitData[2], splitData[3], Double.parseDouble(splitData[4]));
+            case "ediprod":
+                updateProduct(Integer.parseInt(productDetails[1]), productDetails[2], productDetails[3], Double.parseDouble(productDetails[4]));
                 break;
-            case 2:
-                removeProduct(Integer.parseInt(splitData[1]));
+            case "remprod":
+                removeProduct(Integer.parseInt(productDetails[1]));
                 break;
-            case 3:
-                serve(Integer.parseInt(splitData[1]));
+            case "reqprod":
+                serve(Integer.parseInt(productDetails[1]));
                 break;
-            case 4:
-                printAll();
+            case "showall":
+                showAll();
                 break;
         }
     }
 
     private static void addProduct( int idCode, String name, String section,  double price) throws IOException{
-        System.out.println("All good 2");
+        
         if(!products.containsKey(idCode)){
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
@@ -127,7 +128,7 @@ public class DataBase {
 
     }
 
-    private static void printAll(){
+    private static void showAll(){
         for(Integer key : products.keySet()){
             System.out.println(products.get(key).toString());
         }
