@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.concurrent.TimeUnit;
 /*
 A pseudo computer, that is used to add/edit/remove items in the database and print item SEL's
 
@@ -21,7 +22,7 @@ public class Computer {
     static final int BROKER_PORT = 2;
 
     private static Transreceiver transreceiver;
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         
         System.out.println("Computer turned on");
 
@@ -41,11 +42,15 @@ public class Computer {
     }
 
     // automatic, hardcoded operation of "Computer"
-    private static void operateAutomaticlly() throws IOException{
+    private static void operateAutomaticlly() throws IOException, InterruptedException{
         addProduct(0,"A","Games",19.99);
+        TimeUnit.SECONDS.sleep(4);
         addProduct(1,"Bb","Games",19.99);
+        TimeUnit.SECONDS.sleep(4);
         addProduct(2,"CCC","Toys",19.99);
+        TimeUnit.SECONDS.sleep(4);
         addProduct(3,"DDD","Toys",19.99);
+        TimeUnit.SECONDS.sleep(4);
 
         requestProductDetails(2);
 
