@@ -111,8 +111,10 @@ public class Computer {
         }
     }
     
-    private static void requestProductDetails(int idCode) throws IOException{
+    private static synchronized String requestProductDetails(int idCode) throws IOException{
         transreceiver.send("reqprod:"+idCode, BROKER_PORT);
+        String product = transreceiver.receive();
+        return product;
     }
 
     private static void addProduct(int idCode, String name, String section,  double price) throws IOException{
