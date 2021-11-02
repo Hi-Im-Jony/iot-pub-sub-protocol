@@ -143,7 +143,9 @@ public class Broker {
         
         ArrayList<Integer> printerPorts = subscribedPrinters.get(section);
 
-        for(String request: printStack){
+        if(printerPorts.size()>0)
+        while(printStack.size()>0){
+            String request = printStack.pop();
             for(Integer printerPort: printerPorts)
                 transreceiver.send(request, printerPort); // send to printer
         }
