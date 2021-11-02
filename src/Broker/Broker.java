@@ -70,15 +70,15 @@ public class Broker {
 
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split(":"); // request:idCode/name/section/price:(destPort):requestorPort
+        String[] splitData = data.split(":"); // data = request:info:requestorPort
         String request = splitData[0];
         switch(request){
             // cases Broker should deal with
             case "connect": // connect:section:requestorPort
                 String section  = splitData[1];
                 int port = Integer.parseInt(splitData[2]);
-
                 connect(port, section);
+                checkPrintStack(section);
                 break;
 
             case "sub":
@@ -118,6 +118,20 @@ public class Broker {
                 }
                 
                 subscribedPrinters.put(section, subs);
+    }
+
+    private static void checkPrintStack(String section) throws IOException{
+        Stack<String> printStack = printerStacks.get(section);
+
+        if(printStack==null || printStack.size()==0) // nothing to print
+            return;
+        
+        ArrayList<Integer> printerPorts = subscribedPrinters.get(section);
+        
+        for(String request: printStack){
+            for(Integer printerPort: printerPorts)
+                transreceiver.send(request, printerPort);
+        }
     }
 
     private static void subscribe(int requestorPort, String topic){
