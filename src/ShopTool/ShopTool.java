@@ -29,6 +29,11 @@ public class ShopTool {
     private static String cache;
     public static void main(String[] args) throws IOException, InterruptedException {
         
+        // subscribe to any topics told to sub to
+        if(args.length>0)
+            for(String topic: args)
+                sub(topic);
+            
         System.out.println("ShopTool turned on");
 
         transreceiver = new Transreceiver();
@@ -36,6 +41,12 @@ public class ShopTool {
         ReceiverThread receiverThread = new ReceiverThread(); // create new "back up thread" to receive while we print
         receiverThread.start();
 
+        demo();
+
+    }
+
+    private static void demo(){
+        // TODO
     }
 
     private static class ReceiverThread extends Thread{
@@ -79,12 +90,12 @@ public class ShopTool {
             transreceiver.send("print:"+info, BROKER_PORT);
     }
     
-    private static void sub(String topic){
-
+    private static void sub(String topic) throws IOException{
+        transreceiver.send("sub:"+topic, BROKER_PORT);
     }
 
-    private static void unsub(String topic){
-        
+    private static void unsub(String topic) throws IOException{
+         transreceiver.send("unsub:"+topic, BROKER_PORT);
     }
 
     // Class that can send and/or receive udp packets
