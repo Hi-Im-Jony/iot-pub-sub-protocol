@@ -125,7 +125,7 @@ public class Broker {
                 break;
             case "serve": // ie, serve only one client based on a request, not same as publishing to subs
                 int destPort = Integer.parseInt(splitData[2]);
-                splitData[2] = splitData[2].replaceAll(";", ":");
+                splitData[1] = splitData[1].replaceAll(";", ":");
                 transreceiver.send(splitData[1], destPort);
                 break;
         }
