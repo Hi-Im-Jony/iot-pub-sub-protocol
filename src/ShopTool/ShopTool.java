@@ -94,7 +94,7 @@ public class ShopTool {
             case "prod": // data represents a product
                 cache = splitData[1];
                 break;
-            case "not": // data is a notification
+            default : // data is a notification
                 System.out.println("NOTIFICATION: "+splitData[1]);
                 break;
         }
