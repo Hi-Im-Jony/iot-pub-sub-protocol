@@ -64,8 +64,8 @@ public class ShopTool {
 
         scan(1);
         TimeUnit.SECONDS.sleep(1);
-        System.out.println("About to print: "+cache);
         printProductSEL(cache);
+        TimeUnit.SECONDS.sleep(2);
         System.out.println("Demo over");
     }
 
