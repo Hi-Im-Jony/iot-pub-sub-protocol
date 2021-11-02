@@ -9,6 +9,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.concurrent.TimeUnit;
+import java.util.Random;
 
 /*
 A pseudo printer, will print item SEL's 
@@ -26,12 +27,13 @@ public class Printer{
         
         
         transreceiver = new Transreceiver();
-
-        // connect to broker by picking a section to sub to
+        Random random = new Random();
         String sectionSubbingTo = args[0];
-        connect(sectionSubbingTo);
+        
         if(sectionSubbingTo.equals("Games"))
-            TimeUnit.SECONDS.sleep(15); // for demo purposes, printers in the gaming section wont turn on for 10sec
+            TimeUnit.SECONDS.sleep(random.nextInt(20)+10); // for demo purposes, printers in the gaming section wont turn on for 10sec
+
+        connect(sectionSubbingTo);
         System.out.println("Printer turned on");
 
         String data = transreceiver.receive(); // receive data
