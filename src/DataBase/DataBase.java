@@ -89,7 +89,7 @@ public class DataBase {
         
         }
         else{
-            transreceiver.send("Error 101: Product exists", 2); // send error message to broker "Product exists"
+            transreceiver.send("101: Product exists", 2); // send error message to broker "Product exists"
         }
     }
 
@@ -102,7 +102,7 @@ public class DataBase {
             transreceiver.send("updatesubs:"+product.section, 2); // ask broker to update subs to this section
         }
         else{
-            transreceiver.send("Error 102: Product doesn't exist", 2); // send error message to broker "Product doesn't exist"
+            transreceiver.send("102: Product doesn't exist", 2); // send error message to broker "Product doesn't exist"
         }
     }
 
@@ -123,7 +123,7 @@ public class DataBase {
             transreceiver.send(requestedProduct.toString(), 1);
         }
         else{
-            transreceiver.send("Error 102: Product doesn't exist", 1); // send error message to broker "Product doesn't exist
+            transreceiver.send("102: Product doesn't exist", 1); // send error message to broker "Product doesn't exist
         }
 
     }
