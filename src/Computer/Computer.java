@@ -35,14 +35,28 @@ public class Computer {
         demo();
     }
 
+    private static void interpret(String data){
+        String[] splitData = data.split(":"); // data = dataType:info
+        String dataType = splitData[0];
+
+        switch(dataType){
+            case "prod": // data represents a product
+                cache = splitData[1];
+                cache = cache.substring(5);
+                break;
+        }
+    }
+
     private static class CopmuterReceiverThread extends Thread{
         @Override
         public void run(){
             try {
-                cache = transreceiver.receive();
+                String data = transreceiver.receive();
 
                 CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
                 receiverThread.start();
+
+                interpret(data);
             } catch (IOException e) {
                 e.printStackTrace();
             }
