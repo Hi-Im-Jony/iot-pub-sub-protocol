@@ -43,7 +43,26 @@ public class Computer {
 
     // automatic, hardcoded operation of "Computer"
     private static void operateAutomaticlly() throws IOException, InterruptedException{
+        requestProductDetails(2);
+        TimeUnit.SECONDS.sleep(4);
+
+        // attempting to edit non-existent product
+        editProduct(2, "name", "section", 9.99);
+        TimeUnit.SECONDS.sleep(4);
+
         addProduct(0,"A","Games",19.99);
+
+        // add product with duplicate id
+        addProduct(0,"B","Games",19.99);
+        TimeUnit.SECONDS.sleep(4);
+
+        requestProductDetails(0);
+        TimeUnit.SECONDS.sleep(4);
+
+        // remove non-existent product
+        removeProduct(2);
+        TimeUnit.SECONDS.sleep(4);
+
         addProduct(1,"Bb","Games",19.99);
         addProduct(2,"CCC","Toys",19.99);
         addProduct(3,"DDD","Toys",19.99);
@@ -74,7 +93,7 @@ public class Computer {
         // change section
         editProduct(2, "CCC", "Pets", 9.99);
         TimeUnit.SECONDS.sleep(4);
-        printProductSEL(0);
+        printProductSEL(2);
     }
 
     private static class CopmuterReceiverThread extends Thread{
