@@ -73,13 +73,11 @@ public class DataBase {
                 updateProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]),requestorPort);
                 break;
             case "remprod":
-                removeProduct(Integer.parseInt(productDetails[0])); // doesn't need requestor port as there isn't really a way to error here
+                removeProduct(Integer.parseInt(productDetails[0])); // doesn't need requestor port as there isn't a way to error here
+                                                                    // thus, no need to send error message
                 break;
             case "reqprod":
                 serve(Integer.parseInt(productDetails[0]), requestorPort);
-                break;
-            case "showall":
-                showAll();
                 break;
         }
     }
@@ -134,13 +132,6 @@ public class DataBase {
         }
 
     }
-
-    private static synchronized void showAll(){
-        for(Integer key : products.keySet()){
-            System.out.println(products.get(key).toString());
-        }
-    }
-
     
     /*
     A class to store information on a product
