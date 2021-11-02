@@ -17,14 +17,14 @@ services:
     depends_on:
       - "broker"
     build: src/Computer
-    command: java Computer.java 3 1
+    command: java Computer.java 1
     network_mode: host
 
   printer:
     depends_on:
       - "broker"
     build: src/Printer/
-    command: java Printer.java 4
+    command: java Printer.java
     network_mode: host
 
   tcpdump:
