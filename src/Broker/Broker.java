@@ -1,6 +1,7 @@
 package Broker;
 
 import java.util.HashMap;
+import java.util.Stack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.io.ByteArrayInputStream;
@@ -20,20 +21,25 @@ Broker can:
 - Publish data to subs of topic
 */
 public class Broker {
-
+    
     static final int DB_PORT = 1;
     static final int BROKER_PORT = 2;
+    static final int PRINTER_PORT = 3;
     
 	static final int MTU = 1500;
 
     static Transreceiver transreceiver;
 
-    static HashMap<Integer, ArrayList<Integer>> topicSubscribers;
+    static HashMap<String, ArrayList<Integer>> topicSubscribers;
+    static HashMap<String, Stack<String>> printerStacks; // key is section (topic) of stack, content is stack of "products".toString()
+    static HashMap<String, ArrayList<Integer>> subscribedPrinters; // key is section printer is subbed to, content is port(s) of subbed printer
 
    public static void main(String[] args) throws IOException {
         
         System.out.println("Broker turned on");
         topicSubscribers = new HashMap<>();
+        printerStacks = new HashMap<>();
+        subscribedPrinters = new HashMap<>();
 
         transreceiver = new Transreceiver(BROKER_PORT); // hardcoded address cause only one broker
 
@@ -68,15 +74,35 @@ public class Broker {
         String request = splitData[0];
         switch(request){
             // cases Broker should deal with
+            case "connect": // connect:section:requestorPort
+                System.out.println("connecting printer");
+                String topic = splitData[1];
+                int requestorPort = Integer.parseInt(splitData[2]);
+
+                ArrayList<Integer> subs = subscribedPrinters.get(topic);
+
+                if(subs != null)
+                    subs.add(requestorPort);
+                else{
+                    subs = new ArrayList<Integer>();
+                    subs.add(requestorPort);
+                }
+                
+                subscribedPrinters.put(topic, subs);
+                System.out.println("Printer connected");
+                break;
+
             case "sub":
             case"unsub":
             case "updatesubs":
                 break;
-            case "serve":
+
+            case "serve": // ie, serve only one client based on a request, not same as publishing to subs
                 int destPort = Integer.parseInt(splitData[2]);
                 System.out.println("Sending DB response: \""+splitData[1]+  "\", to: "+destPort);
                 transreceiver.send(splitData[1], destPort);
                 break;
+
             // cases to send to DataBase
             case "addprod":
             case "ediprod":
@@ -85,11 +111,16 @@ public class Broker {
             case "showall":
                 transreceiver.send(data, DB_PORT);
                 break;
+
+            // cases to send to Printer
+            case "print":
+                transreceiver.send(data, 3);
         }
     }
 
-    private static void subscribe(int requestorPort, int topic){
-        //System.out.println("Executing 'subscribe'");
+  
+
+    private static void subscribe(int requestorPort, String topic){
         ArrayList<Integer> subs = topicSubscribers.get(topic);
         if(subs != null)
             subs.add(requestorPort);
@@ -100,8 +131,7 @@ public class Broker {
         }
     }
 
-    private static void unsubscribe(int requestorPort, int topic){
-        //System.out.println("Executing 'unsub'");
+    private static void unsubscribe(int requestorPort, String topic){
         ArrayList<Integer> subs = topicSubscribers.get(topic);
 
         if(subs != null)

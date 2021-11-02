@@ -25,10 +25,19 @@ public class Printer{
         
         System.out.println("Printer turned on");
         transreceiver = new Transreceiver();
+
+        // connect to broker by picking a section to sub to
+        String sectionSubbingTo = args[0];
+        subTo(sectionSubbingTo);
+
         String data = transreceiver.receive(); // receive data
         PrinterReceiverThread backup = new PrinterReceiverThread(); // create new "back up thread" to receive while we print
         backup.start();
         printSEL(data, 0.0);
+    }
+
+    private static void subTo(String section) throws IOException{
+        transreceiver.send("connect:"+section, BROKER_PORT);
     }
 
     private static void printSEL(String name, double price){
