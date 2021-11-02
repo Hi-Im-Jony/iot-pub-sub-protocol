@@ -71,9 +71,10 @@ public class Broker {
             case "sub":
             case"unsub":
             case "updatesubs":
+                break;
             case "serve":
                 int destPort = Integer.parseInt(splitData[2]);
-                System.out.println("Sending db response to: "+destPort);
+                System.out.println("Sending DB response: \""+splitData[1]+  "\", to: "+destPort);
                 transreceiver.send(splitData[1], destPort);
                 break;
             // cases to send to DataBase
@@ -140,7 +141,7 @@ public class Broker {
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
 
             String data =  ostream.readUTF();
-            System.out.println("Received from port:"+packet.getPort());
+            System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
             data = data+":"+packet.getPort();
             return data;
         }
