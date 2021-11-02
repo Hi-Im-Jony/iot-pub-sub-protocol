@@ -72,11 +72,12 @@ public class Broker {
         
         String[] splitData = data.split(":"); // data = request:info:requestorPort
         String request = splitData[0];
+        int port = Integer.parseInt(splitData[2]);
         switch(request){
             // relevant to Printer
             case "connect": // connect:section:requestorPort
                 String section  = splitData[1];
-                int port = Integer.parseInt(splitData[2]);
+                
                 connect(port, section);
                 checkPrintStack(section);
                 break;
@@ -99,10 +100,19 @@ public class Broker {
                 checkPrintStack(productSection);
                 break;
 
-            // relevant to Scanner
-            case "sub":
+            // relevant to ShopTool
+            case "sub": // data = sub:<section>
+                subscribe(port, splitData[1]);
+                break;
             case "unsub":
-            case "updatesubs":
+                unsubscribe(port, splitData[1]);
+                break;
+            case "pub": // publish to subscribers
+                String[] params = splitData[1].split("/");
+                String topic = params[0];
+                String message = params[1];
+                message.replaceAll(";", ":");
+                publish(topic, message);
                 break;
 
             // relevant to DataBase
@@ -172,8 +182,15 @@ public class Broker {
             }
     }
 
-    private static void publish(int topic, String data) throws IOException{
-       // TODO publish data to subs of topic
+    private static void publish(String topic, String data) throws IOException{
+        ArrayList<Integer> subs = topicSubscribers.get(topic);
+
+        if(subs == null)
+            return;
+
+        for(Integer port:subs){
+            transreceiver.send(data, port);
+        }
     }
 
     private static class Transreceiver{
