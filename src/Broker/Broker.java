@@ -143,7 +143,7 @@ public class Broker {
         
         ArrayList<Integer> printerPorts = subscribedPrinters.get(section);
 
-        if(printerPorts.size()>0)
+        if(printerPorts != null)
         while(printStack.size()>0){
             String request = printStack.pop();
             for(Integer printerPort: printerPorts)
