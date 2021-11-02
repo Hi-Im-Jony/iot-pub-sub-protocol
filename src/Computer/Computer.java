@@ -54,15 +54,6 @@ public class Computer {
             }
         }
     }
-
-    private static void interpretInput(String input){
-        int count = input.length() - input.replaceAll("/", "").length(); // count of "/" in a our input
-        
-        if(count==3){
-            // input is a product we have requested for
-            cache = input;
-        }
-    }
     // manual operation of "Computer" via terminal
     private static void operateManually(){
     }
