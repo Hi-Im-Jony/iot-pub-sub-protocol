@@ -17,16 +17,15 @@ Company Computer can:
 - Print item SEL
 */
 public class Computer {
-    
+
     static final int BROKER_PORT = 2;
 
-    private static SenderReceiver transreceiver;
+    private static Transreceiver transreceiver;
     public static void main(String[] args) throws IOException {
         
         System.out.println("Computer turned on");
 
-        int receiverPort =  Integer.parseInt(args[0]);
-        transreceiver = new SenderReceiver(receiverPort, "Printer");
+        transreceiver = new Transreceiver();
 
         CopmuterReceiverThread receiverThread = new CopmuterReceiverThread(); // create new "back up thread" to receive while we print
         receiverThread.start();
@@ -108,33 +107,23 @@ public class Computer {
     }
 
      // Class that can send and/or receive udp packets
-    private static class SenderReceiver{
+    private static class Transreceiver{
         
         static final int MTU = 1500;
 
-        private DatagramSocket receiverSocket;
-        private DatagramSocket senderSocket;
-
-        private String owner;
-
+        private DatagramSocket transreceiver;
         
-        public SenderReceiver(int receiverPort, String owner) throws IOException{
-
-            InetAddress address = InetAddress.getLocalHost();
-
-            this.owner = owner;
-
-            senderSocket = new DatagramSocket();
-            receiverSocket= new DatagramSocket(receiverPort, address);
-            
+        public Transreceiver() throws IOException{
+            transreceiver= new DatagramSocket();
         }
+
         public String receive() throws IOException{
             
-            // create buffer for data, packet and receiverSocket
+            // create buffer for data, packet and transreceiver
             byte[] buffer= new byte[MTU];
             DatagramPacket packet= new DatagramPacket(buffer, buffer.length);
         
-            receiverSocket.receive(packet);
+            transreceiver.receive(packet);
 
             // extract data from packet
             buffer= packet.getData();
@@ -160,14 +149,7 @@ public class Computer {
             byte[] buffer = bstream.toByteArray();
             // create packet addressed to destination
             DatagramPacket packet= new DatagramPacket(buffer, buffer.length, address, port);
-            senderSocket.send(packet);
-            
-        }
-
-        public String buildPayload(String topic, String data){
-            String load = topic + data;
-            //System.out.println(load);
-            return  load;
+            transreceiver.send(packet);
         }
     }
 }

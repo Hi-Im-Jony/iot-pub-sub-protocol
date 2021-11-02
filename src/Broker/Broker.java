@@ -22,10 +22,11 @@ Broker can:
 public class Broker {
 
     static final int DB_PORT = 1;
+    static final int BROKER_PORT = 2;
     
 	static final int MTU = 1500;
 
-    static SenderReceiver transreceiver;
+    static Transreceiver transreceiver;
 
     static HashMap<Integer, ArrayList<Integer>> topicSubscribers;
 
@@ -34,7 +35,7 @@ public class Broker {
         System.out.println("Broker turned on");
         topicSubscribers = new HashMap<>();
 
-        transreceiver = new SenderReceiver(2); // hardcoded address cause only one broker
+        transreceiver = new Transreceiver(BROKER_PORT); // hardcoded address cause only one broker
 
         // start listening for packets
         String request = transreceiver.receive(); // execution is blocked here until a packet is received
@@ -83,10 +84,9 @@ public class Broker {
             case "showall":
                 transreceiver.send(data, DB_PORT);
                 break;
-            
-                
         }
     }
+
     private static void subscribe(int requestorPort, int topic){
         //System.out.println("Executing 'subscribe'");
         ArrayList<Integer> subs = topicSubscribers.get(topic);
@@ -116,37 +116,31 @@ public class Broker {
        // TODO publish data to subs of topic
     }
 
-    
-    // Class that can send and/or receive udp packets
-    private static class SenderReceiver{
+    private static class Transreceiver{
         
         static final int MTU = 1500;
 
-        private DatagramSocket receiverSocket;
-        private DatagramSocket senderSocket;
+        private DatagramSocket transreceiver;
         
-        public SenderReceiver(int receiverPort) throws IOException{
-
-            InetAddress address = InetAddress.getLocalHost();
-            senderSocket = new DatagramSocket();
-            receiverSocket= new DatagramSocket(receiverPort, address);
-            
+        public Transreceiver(int port) throws IOException{
+            transreceiver= new DatagramSocket(port);
         }
+
         public String receive() throws IOException{
             
-            // create buffer for data, packet and receiverSocket
+            // create buffer for data, packet and transreceiver
             byte[] buffer= new byte[MTU];
             DatagramPacket packet= new DatagramPacket(buffer, buffer.length);
         
-            receiverSocket.receive(packet);
+            transreceiver.receive(packet);
 
             // extract data from packet
             buffer= packet.getData();
             ByteArrayInputStream bstream= new ByteArrayInputStream(buffer);
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
-            
+
             String data =  ostream.readUTF();
-            System.out.println("Received from port:"+packet.getAddress());
+            System.out.println("Received from port:"+packet.getPort());
             data = data+":"+packet.getPort();
             return data;
         }
@@ -165,8 +159,9 @@ public class Broker {
             byte[] buffer = bstream.toByteArray();
             // create packet addressed to destination
             DatagramPacket packet= new DatagramPacket(buffer, buffer.length, address, port);
-            senderSocket.send(packet);
-            
+            transreceiver.send(packet);
         }
     }
 }
+
+
