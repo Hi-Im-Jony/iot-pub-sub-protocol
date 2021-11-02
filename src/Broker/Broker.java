@@ -101,7 +101,7 @@ public class Broker {
 
             // relevant to Scanner
             case "sub":
-            case"unsub":
+            case "unsub":
             case "updatesubs":
                 break;
 
