@@ -64,7 +64,7 @@ public class ShopTool {
 
         scan(1);
         TimeUnit.SECONDS.sleep(1);
-        System.out.println("About to print");
+        System.out.println("About to print: "+cache);
         printProductSEL(cache);
         System.out.println("Demo over");
     }
@@ -95,7 +95,7 @@ public class ShopTool {
                 cache = splitData[1];
                 break;
             default : // data is a notification
-                System.out.println("NOTIFICATION: "+splitData[1]);
+                System.out.println("NOTIFICATION: "+data);
                 break;
         }
     }
