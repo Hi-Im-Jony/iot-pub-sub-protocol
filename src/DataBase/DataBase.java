@@ -185,8 +185,8 @@ public class DataBase {
             ByteArrayInputStream bstream= new ByteArrayInputStream(buffer);
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
 
-            // print data and end of program
             String data =  ostream.readUTF();
+            System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
             return data;
         }
 
