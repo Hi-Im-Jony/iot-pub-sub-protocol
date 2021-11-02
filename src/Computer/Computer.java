@@ -32,10 +32,7 @@ public class Computer {
         CopmuterReceiverThread receiverThread = new CopmuterReceiverThread(); // create new "back up thread" to receive while we print
         receiverThread.start();
 
-        if(Integer.parseInt(args[0])==0)
-            operateManually();
-        else
-            operateAutomaticlly();
+        demo();
     }
 
     private static class CopmuterReceiverThread extends Thread{
@@ -46,20 +43,14 @@ public class Computer {
 
                 CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
                 receiverThread.start();
-
-                
-                
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    // manual operation of "Computer" via terminal
-    private static void operateManually(){
-    }
 
-    // automatic, hardcoded operation of "Computer"
-    private static void operateAutomaticlly() throws IOException, InterruptedException{
+    // demo script for the video
+    private static void demo() throws IOException, InterruptedException{
         // requestProductDetails(2);
         // TimeUnit.SECONDS.sleep(4);
 
