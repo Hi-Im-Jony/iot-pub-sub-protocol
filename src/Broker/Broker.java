@@ -70,9 +70,9 @@ public class Broker {
 
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split(":"); // data = <request>:<info>:<requestorPort>
-        String request = splitData[0];
-        int port = Integer.parseInt(splitData[2]);
+        String[] info = data.split(":"); // data = <request>:<info>:<requestorPort>
+        String request = info[0];
+        int port = Integer.parseInt(info[2]);
         switch(request){
             
             // used by Printer to connect to Broker, 
@@ -80,7 +80,7 @@ public class Broker {
             case "connect": // <info> = <section>
             
 
-                String section  = splitData[1];
+                String section  = info[1];
                 
                 connect(port, section);
                 checkPrintStack(section);
@@ -89,18 +89,18 @@ public class Broker {
             // used by ShopTool and Computer to ask printer to print SEL with the provided info
             case "print": // <info> = <id / name / section / price>
             
-                String info = splitData[1];
-                String[] productInfo = info.split("/");
+                String details = info[1];
+                String[] productInfo = details.split("/");
                 if(productInfo.length!=4)
                     break;
                 String productSection = productInfo[2];
                 Stack<String> stack = printerStacks.get(productSection);
                 
                 if(stack != null)
-                    stack.push(info);
+                    stack.push(details);
                 else{
                     stack = new Stack<>();
-                    stack.push(info);
+                    stack.push(details);
                 }
                 printerStacks.put(productSection, stack);
 
@@ -109,18 +109,18 @@ public class Broker {
 
             // used by ShopTool to sub to section (topic) the tool will be used in, in the "store"
             case "sub": // <info> = <section>
-                subscribe(port, splitData[1]);
+                subscribe(port, info[1]);
                 break;
 
             // used by ShopTool to unsub from section (topic)
             case "unsub": // <info> = <section>
-                unsubscribe(port, splitData[1]);
+                unsubscribe(port, info[1]);
                 break;
 
             // used by DataBase to notify (publish) relevant ShopTools about
             // a change to products in their section
             case "pub": // <info> = <topic * message ; id / name / section / price>
-                String[] params = splitData[1].split("\\*");
+                String[] params = info[1].split("\\*");
                 String topic = params[0];
                 String message = params[1];
                 message = message.replaceAll(";", ": ");
@@ -138,9 +138,9 @@ public class Broker {
 
             // used by DataBase to serve a response to a client
             case "serve": // <info> = <prod ; id / name / section / price> OR <info> = <Error ; message>
-                int destPort = Integer.parseInt(splitData[2]);
-                splitData[1] = splitData[1].replaceAll(";", ":");
-                transreceiver.send(splitData[1], destPort);
+                int destPort = Integer.parseInt(info[2]);
+                info[1] = info[1].replaceAll(";", ":");
+                transreceiver.send(info[1], destPort);
                 break;
         }
     }

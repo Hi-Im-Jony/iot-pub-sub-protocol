@@ -60,23 +60,23 @@ public class DataBase {
     }
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split(":"); // request:idCode/name/section/price:requestorPort
-        String request = splitData[0];
-        String[] productDetails = splitData[1].split("/");
-        int requestorPort = Integer.parseInt(splitData[2]);
+        String[] info = data.split(":"); // // data = <request>:<info>:<requestorPort>
+        String request = info[0];
+        String[] productDetails = info[1].split("/");
+        int requestorPort = Integer.parseInt(info[2]);
         
         switch(request){
-            case "addprod":
+            case "addprod": // <info> = <id / name / section / price>
                 addProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]), requestorPort);
                 break;
-            case "ediprod":
+            case "ediprod": // <info> = <id / name / section / price>
                 updateProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]),requestorPort);
                 break;
-            case "remprod":
+            case "remprod": // <info> = <id>
                 removeProduct(Integer.parseInt(productDetails[0])); // doesn't need requestor port as there isn't a way to error here
                                                                     // thus, no need to send error message
                 break;
-            case "reqprod":
+            case "reqprod": // <info> = <id>
                 serve(Integer.parseInt(productDetails[0]), requestorPort);
                 break;
         }
