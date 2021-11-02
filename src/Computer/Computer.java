@@ -52,33 +52,14 @@ public class Computer {
 
     }
 
-    private static void viewReceivedData(String data){
-
-        String[] splitData = data.split(":");
-        String request = splitData[0];
-
-        switch(request){
-            case "showprod":
-                String[] productDetails = splitData[1].split("/");
-                System.out.println("\n\n\n----------------------");
-                System.out.println("      |  Product details   ");
-                System.out.println("      | -------------------");
-                System.out.println("      | Name:"+productDetails[1]);
-                System.out.println("      | Section:"+productDetails[2]);
-                System.out.println("      | Price:"+productDetails[3]);
-                System.out.println("      | -------------------|");
-                break;
-        }
-    }
     private static class CopmuterReceiverThread extends Thread{
         @Override
         public void run(){
             try {
-                String data = transreceiver.receive();
+                transreceiver.receive();
 
                 CopmuterReceiverThread receiverThread = new CopmuterReceiverThread();
                 receiverThread.start();
-                viewReceivedData(data);
                 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -130,8 +111,8 @@ public class Computer {
             ByteArrayInputStream bstream= new ByteArrayInputStream(buffer);
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
 
-            // print data and end of program
             String data =  ostream.readUTF();
+            System.out.println("Received: \""+data+",\" from port:"+packet.getPort());
             return data;
         }
 
