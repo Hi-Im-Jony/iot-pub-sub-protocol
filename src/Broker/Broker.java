@@ -61,24 +61,28 @@ public class Broker {
 
     private static void executeRequest(String data) throws NumberFormatException, IOException{
         
-        String[] splitData = data.split(":"); // request:idCode/name/section/price:requestorPort
+        String[] splitData = data.split(":"); // request:idCode/name/section/price:(destPort):requestorPort
         String request = splitData[0];
         switch(request){
             // cases Broker should deal with
             case "sub":
             case"unsub":
             case "updatesubs":
+            case "serve":
+                int destPort = Integer.parseInt(splitData[2]);
+                System.out.println("Sending db response to: "+destPort);
+                transreceiver.send(splitData[1], destPort);
                 break;
             // cases to send to DataBase
             case "addprod":
             case "ediprod":
             case "remprod":
-                transreceiver.send(data, 1);
-                break;
             case "reqprod":
             case "showall":
-
+                transreceiver.send(data, 1);
                 break;
+            
+                
         }
     }
     private static void subscribe(int requestorPort, int topic){
@@ -140,6 +144,7 @@ public class Broker {
             ObjectInputStream  ostream= new ObjectInputStream(bstream);
             
             String data =  ostream.readUTF();
+            System.out.println("Received from port:"+packet.getAddress());
             data = data+":"+packet.getPort();
             return data;
         }
