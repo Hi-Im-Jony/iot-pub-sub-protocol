@@ -90,11 +90,11 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(idCode, product);
             String update = "NEW PRODUCT ADDED TO YOUR SECTION; "+product.toString();
-            transreceiver.send("pub:"+product.section+"/"+update, BROKER_PORT); // ask broker to update subs to this section
+            transreceiver.send("pub:"+product.section+"*"+update, BROKER_PORT); // ask broker to update subs to this section
         
         }
         else{
-            transreceiver.send("serve:Error, requested product (id code = "+idCode+") already exists:"+requestorPort, BROKER_PORT);
+            transreceiver.send("serve:Error; requested product (id code = "+idCode+") already exists:"+requestorPort, BROKER_PORT);
         }
     }
 
@@ -104,10 +104,10 @@ public class DataBase {
             Product product = new Product(name,section,idCode,price);
             products.put(product.idCode, product);
             String update = "PRODUCT ON YOUR SECTION HAS BEEN MODIFIED;"+product.toString();
-            transreceiver.send("pub:"+product.section+"/"+update, BROKER_PORT); // ask broker to update subs to this section
+            transreceiver.send("pub:"+product.section+"*"+update, BROKER_PORT); // ask broker to update subs to this section
         }
         else{
-            transreceiver.send("serve:Error, requested product (id code = "+idCode+") doesn't exist:"+requestorPort, BROKER_PORT);
+            transreceiver.send("serve:Error; requested product (id code = "+idCode+") doesn't exist:"+requestorPort, BROKER_PORT);
         }
     }
 
@@ -119,7 +119,7 @@ public class DataBase {
             products.remove(idCode);
             
             
-            transreceiver.send("pub:"+section+"/"+update, BROKER_PORT); // ask broker to update subs to this section
+            transreceiver.send("pub:"+section+"*"+update, BROKER_PORT); // ask broker to update subs to this section
         }
 
     }
@@ -130,7 +130,7 @@ public class DataBase {
             transreceiver.send("serve:"+requestedProduct.toString()+":"+destPort, BROKER_PORT);
         }
         else{
-            transreceiver.send("serve:Error, requested product (id code = "+idCode+") doesn't exist:"+destPort, BROKER_PORT);
+            transreceiver.send("serve:Error; requested product (id code = "+idCode+") doesn't exist:"+destPort, BROKER_PORT);
         }
 
     }
