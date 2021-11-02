@@ -41,23 +41,23 @@ public class ShopTool {
     }
 
     private static void demo(String topic) throws IOException, InterruptedException{
-        // TODO
-        TimeUnit.SECONDS.sleep(10); // wait for Computer to add some items to db
 
-        // "scan" some codes instore
-        scan(0);
-        TimeUnit.SECONDS.sleep(5);
-        scan(1);
-        TimeUnit.SECONDS.sleep(5);
+        // TimeUnit.SECONDS.sleep(10); // wait for Computer to add some items to db
 
-        // "scan" incorrect code - see what happens
-        scan(1089); 
-        TimeUnit.SECONDS.sleep(5);
-        scan(4);
-        TimeUnit.SECONDS.sleep(5);
+        // // "scan" some codes instore
+        // scan(0);
+        // TimeUnit.SECONDS.sleep(5);
+        // scan(1);
+        // TimeUnit.SECONDS.sleep(5);
+
+        // // "scan" incorrect code - see what happens
+        // scan(1089); 
+        // TimeUnit.SECONDS.sleep(5);
+        // scan(4);
+        // TimeUnit.SECONDS.sleep(5);
 
         sub(topic);
-        TimeUnit.SECONDS.sleep(10);
+        TimeUnit.SECONDS.sleep(30);
 
         unsub(topic);
         TimeUnit.SECONDS.sleep(10);
@@ -65,6 +65,7 @@ public class ShopTool {
         scan(1);
         TimeUnit.SECONDS.sleep(1);
         printProductSEL(cache);
+        System.out.println("Demo over");
     }
 
     private static class ReceiverThread extends Thread{
