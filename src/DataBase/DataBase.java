@@ -62,16 +62,16 @@ public class DataBase {
         
         switch(request){
             case "addprod":
-                addProduct(Integer.parseInt(productDetails[1]), productDetails[2], productDetails[3], Double.parseDouble(productDetails[4]));
+                addProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]));
                 break;
             case "ediprod":
-                updateProduct(Integer.parseInt(productDetails[1]), productDetails[2], productDetails[3], Double.parseDouble(productDetails[4]));
+                updateProduct(Integer.parseInt(productDetails[0]), productDetails[1], productDetails[2], Double.parseDouble(productDetails[3]));
                 break;
             case "remprod":
-                removeProduct(Integer.parseInt(productDetails[1]));
+                removeProduct(Integer.parseInt(productDetails[0]));
                 break;
             case "reqprod":
-                serve(Integer.parseInt(productDetails[1]));
+                serve(Integer.parseInt(productDetails[0]));
                 break;
             case "showall":
                 showAll();
