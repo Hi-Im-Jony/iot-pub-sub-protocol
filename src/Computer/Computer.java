@@ -44,17 +44,37 @@ public class Computer {
     // automatic, hardcoded operation of "Computer"
     private static void operateAutomaticlly() throws IOException, InterruptedException{
         addProduct(0,"A","Games",19.99);
-        TimeUnit.SECONDS.sleep(4);
         addProduct(1,"Bb","Games",19.99);
-        TimeUnit.SECONDS.sleep(4);
         addProduct(2,"CCC","Toys",19.99);
+        addProduct(3,"DDD","Toys",19.99);
         TimeUnit.SECONDS.sleep(4);
+
+        // attempting to add duplicate
         addProduct(3,"DDD","Toys",19.99);
         TimeUnit.SECONDS.sleep(4);
 
         requestProductDetails(2);
+        TimeUnit.SECONDS.sleep(4);
 
 
+        removeProduct(2);
+        TimeUnit.SECONDS.sleep(4);
+
+        // attempting to edit non-existent product
+        editProduct(2, "name", "section", 9.99);
+        TimeUnit.SECONDS.sleep(4);
+        
+        addProduct(2,"CCC","Toys",19.99);
+        TimeUnit.SECONDS.sleep(4);
+
+        // change price
+        editProduct(2, "CCC", "Toys", 9.99);
+        TimeUnit.SECONDS.sleep(4);
+
+        // change section
+        editProduct(2, "CCC", "Pets", 9.99);
+        TimeUnit.SECONDS.sleep(4);
+        printProductSEL(0);
     }
 
     private static class CopmuterReceiverThread extends Thread{
@@ -80,15 +100,15 @@ public class Computer {
         transreceiver.send("addprod:"+idCode+"/"+name+"/"+section+"/"+price, BROKER_PORT);
     }
 
-    private void removeProduct(int idCode) throws IOException{
+    private static void removeProduct(int idCode) throws IOException{
         transreceiver.send("remprod:"+idCode, BROKER_PORT);
     }
 
-    private void editProduct(int idCode, String name, String section,  double price) throws IOException{
+    private static void editProduct(int idCode, String name, String section,  double price) throws IOException{
         transreceiver.send("ediprod:"+idCode+"/"+name+"/"+section+"/"+price, BROKER_PORT);
     }
 
-    private void printProductSEL(int idCode) throws IOException{
+    private static void printProductSEL(int idCode) throws IOException{
         transreceiver.send("print:"+idCode, BROKER_PORT);
     }
 
