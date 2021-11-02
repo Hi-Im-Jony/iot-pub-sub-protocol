@@ -28,8 +28,7 @@ public class Computer {
         CopmuterReceiverThread receiverThread = new CopmuterReceiverThread(); // create new "back up thread" to receive while we print
         receiverThread.start();
 
-        //if(Integer.parseInt(args[1])==0)
-        if(false)
+        if(Integer.parseInt(args[1])==0)
             operateManually();
         else
             operateAutomaticlly();
