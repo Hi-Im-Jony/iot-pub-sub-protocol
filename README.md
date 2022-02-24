@@ -1,10 +1,5 @@
 ## IoT Publish-Subscribe Protocol
 
-Fun time...
-
-Quality, original code by yours truly:
-Cornel Jonathan Cicai, Student: 19335265
-
 Make sure you have docker installed to run this project
 
 ## To run solution
